@@ -38,8 +38,7 @@ button { cursor: pointer; }
 .button.secondary:hover { background: #fff0f2; border-color: #bd1830; }
 .hero { color: white; background: linear-gradient(90deg, #101015cc 0%, #10101575 36%, #10101503 75%), #201b1c url('/lesson.png') center 48% / cover no-repeat; }
 .hero-inner { min-height: clamp(520px, 43vw, 690px); display: flex; flex-direction: column; justify-content: center; position: relative; padding-block: 65px 105px; }
-.hero-copy { max-width: 690px; animation: enter .3s ease-out; }
-@keyframes enter { from { opacity: .4; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.hero-copy { max-width: 690px; }
 .eyebrow { color: #af132b; font-size: .72rem; letter-spacing: .17em; font-weight: 850; text-transform: uppercase; display: inline-flex; align-items: center; gap: 10px; }
 .eyebrow::before { content: ''; width: 27px; height: 2px; background: currentColor; }
 .hero .eyebrow, .dark .eyebrow { color: #ff7887; }
@@ -115,8 +114,10 @@ button { cursor: pointer; }
 .rto-highlight-icon { display: grid; place-items: center; position: relative; z-index: 1; width: 80px; height: 77px; margin-bottom: -5px; background: #fff; color: #bd1830; border-top: 5px solid; border-right: 5px solid; }
 .rto-highlight-copy { display: flex; flex-wrap: wrap; align-items: center; align-content: center; flex: 1; gap: 6px 14px; padding: clamp(12px, 2vw, 26px); background: #fff; border-top: 5px solid #bd1830; box-shadow: 0 12px 36px #2a20221b; }
 .rto-highlight-copy strong { font-size: clamp(1.65rem, 2.6vw, 2.8rem); line-height: 1.05; letter-spacing: -.04em; }
-.rto-highlight-copy span { flex: 1 1 5rem; }
-.rto-highlight-copy span { color: #5d5962; font-size: .9rem; line-height: 1.4; }
+.rto-highlight-copy > span { flex: 1 1 5rem; color: #5d5962; font-size: .9rem; line-height: 1.4; }
+.stat-counter { display: inline-grid; font-variant-numeric: tabular-nums; }
+.stat-counter > span[aria-hidden] { grid-area: 1 / 1; }
+.stat-counter-size { visibility: hidden; }
 @media (min-width: 768px) {
   .rto-banner-inner h2 { flex-basis: 60%; }
   .rto-highlights { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(16px, 3vw, 40px); }
@@ -154,6 +155,30 @@ dialog::backdrop { background: #15131bc2; }
 .dialog-body .section-heading h2 { font-size: clamp(1.8rem, 5vw, 2.5rem); }
 .dialog-body .section-heading { margin-bottom: 14px; }
 .dialog-close { position: absolute; right: 9px; top: 8px; padding: 4px; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .has-entered, .hero-copy, .carousel {
+    animation: page-rise .55s cubic-bezier(.2, .65, .3, 1) backwards;
+  }
+  .hero-copy, .has-entered:nth-child(2) { animation-delay: .06s; }
+  .carousel, .has-entered:nth-child(3) { animation-delay: .12s; }
+  .has-entered:nth-child(4) { animation-delay: .18s; }
+  .topbar, .navrow, .dropdown, dialog[open], dialog[open]::backdrop {
+    animation: page-fade .3s ease-out;
+  }
+  .button svg, .text-link svg, .hero-link svg { transition: translate .2s ease; }
+  :is(.button, .text-link, .hero-link):is(:hover, :focus-visible) svg { translate: 3px 0; }
+}
+
+@keyframes page-rise {
+  from { opacity: .35; translate: 0 16px; }
+  to { opacity: 1; translate: 0 0; }
+}
+
+@keyframes page-fade {
+  from { opacity: .45; }
+  to { opacity: 1; }
+}
 
 @media (max-width: 1080px) {
   .navrow { min-height: 72px; }

@@ -29,6 +29,44 @@ function Heading({ eyebrow, title, children }) {
   return <header className="section-heading"><span className="eyebrow">{eyebrow}</span><h2>{title}</h2>{children && <p>{children}</p>}</header>
 }
 
+function StatCounter({ value, suffix, decimals = 0 }) {
+  const counter = useRef(null)
+  const [displayValue, setDisplayValue] = useState(value)
+
+  useEffect(() => {
+    if (!('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
+    let frame
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return
+      observer.disconnect()
+      const start = performance.now()
+      setDisplayValue(0)
+
+      function tick(now) {
+        const progress = Math.min((now - start) / 1400, 1)
+        setDisplayValue(value * (1 - (1 - progress) ** 2))
+        if (progress < 1) frame = requestAnimationFrame(tick)
+      }
+
+      frame = requestAnimationFrame(tick)
+    }, { threshold: 0.25 })
+    observer.observe(counter.current)
+
+    return () => {
+      observer.disconnect()
+      cancelAnimationFrame(frame)
+    }
+  }, [value])
+
+  const finalValue = value.toFixed(decimals) + suffix
+  return <strong ref={counter} className="stat-counter">
+    <span className="sr-only">{finalValue}</span>
+    <span className="stat-counter-size" aria-hidden="true">{finalValue}</span>
+    <span aria-hidden="true">{displayValue.toFixed(decimals)}{suffix}</span>
+  </strong>
+}
+
 function App() {
   const [slide, setSlide] = useState(0)
   const [menu, setMenu] = useState(false)
@@ -40,6 +78,29 @@ function App() {
   useEffect(() => {
     if (detail && !dialog.current.open) dialog.current.showModal()
   }, [detail])
+
+  useEffect(() => {
+    if (!('IntersectionObserver' in window)) return
+
+    const observer = new IntersectionObserver(entries => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue
+        entry.target.classList.add('has-entered')
+        observer.unobserve(entry.target)
+      }
+    })
+
+    const targets = document.querySelectorAll([
+      '.benefits > div', '.about-image', '.about > div:last-child',
+      'main .section-heading:not(.about .section-heading)', 'main .programme-card',
+      'main .card', '#pricing .button', '.rto-banner-inner > *',
+      '.rto-highlights li', '.faq details', '.contact-links', '.enquiry',
+      '.footer-content > *', '.copyright',
+    ].join(', '))
+
+    targets.forEach(target => observer.observe(target))
+    return () => observer.disconnect()
+  }, [])
 
   function advance(step) {
     setSlide(current => (current + step + slides.length) % slides.length)
@@ -155,13 +216,13 @@ function App() {
         </div>
         <ul className="wrap rto-highlights">
           {[
-            [GraduationCap, '10000+', 'Students Enrolled'],
-            [BookOpen, '7000+', 'Classes Completed'],
-            [ShieldCheck, '4.9★', 'Justdial Rating'],
-            [IdCard, '4+', 'RTO-Certified Instructors'],
-          ].map(([Icon, value, label]) => <li key={label}>
+            [GraduationCap, 10000, '+', 'Students Enrolled'],
+            [BookOpen, 7000, '+', 'Classes Completed'],
+            [ShieldCheck, 4.9, '★', 'Justdial Rating', 1],
+            [IdCard, 4, '+', 'RTO-Certified Instructors'],
+          ].map(([Icon, value, suffix, label, decimals]) => <li key={label}>
             <span className="rto-highlight-icon"><Icon size={38} strokeWidth={1.5} aria-hidden="true"/></span>
-            <div className="rto-highlight-copy"><strong>{value}</strong><span>{label}</span></div>
+            <div className="rto-highlight-copy"><StatCounter value={value} suffix={suffix} decimals={decimals}/><span>{label}</span></div>
           </li>)}
         </ul>
       </section>
@@ -282,5 +343,16 @@ function EnquiryForm({ selected, setSelected }) {
   </form>
 }
 
-createRoot(document.getElementById('root')).render(<App/>)
+const loaderStart = performance.getEntriesByName('site-loader-start', 'mark')[0]?.startTime
+const remainingLoaderTime = 1200 - (performance.now() - (loaderStart ?? 0))
+
+function renderApp() {
+  createRoot(document.getElementById('root')).render(<App/>)
+}
+
+if (remainingLoaderTime > 0) {
+  setTimeout(renderApp, remainingLoaderTime)
+} else {
+  renderApp()
+}
 
