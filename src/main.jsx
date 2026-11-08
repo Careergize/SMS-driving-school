@@ -10,6 +10,7 @@ const slides = [
   { title: 'Build good habits.', accent: 'Drive for life.', description: 'Get comfortable with road signs, everyday manoeuvres and the decisions that make a safer driver.' },
 ]
 const offerings = [...courses, ...services, ...extras]
+const footerAddress = 'First floor, Thankom Towers, TC 82/1095, Pattoor - Vanchiyoor Rd, Vanchiyoor, Thiruvananthapuram, Keralam 695035'
 const rupees = new Intl.NumberFormat('en-IN', {
   style: 'currency', currency: 'INR', maximumFractionDigits: 0,
 })
@@ -185,6 +186,10 @@ function App() {
     <footer className="dark"><div className="wrap footer-content">
       <a className="brand" href="#home"><img src="/sms-logo.jpg" alt=""/><span><strong>SMS</strong><small>MOTOR DRIVING SCHOOL</small></span></a>
       <nav aria-label="Footer navigation" className="flex flex-wrap gap-5">{[['About', 'about'], ['Courses', 'courses'], ['FAQs', 'faq'], ['Contact', 'contact']].map(([label, id]) => <a key={id} href={'#' + id}>{label}</a>)}</nav>
+      <address className="footer-contact">
+        <a href={'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(footerAddress)}><MapPin size={17} aria-hidden="true"/>{footerAddress}</a>
+        <a href="tel:+919745824345"><Phone size={17} aria-hidden="true"/>9745824345</a>
+      </address>
       <a className="back-top" href="#home" aria-label="Back to top"><ArrowUp size={21}/></a>
     </div><div className="wrap copyright">© {new Date().getFullYear()} SMS Motor Driving School</div></footer>
 

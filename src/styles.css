@@ -127,6 +127,10 @@ button { cursor: pointer; }
 .footer-content .brand strong { color: #ff7887; }
 .footer-content nav { font-size: .89rem; }
 .footer-content nav a:hover { text-decoration: underline; }
+.footer-contact { display: grid; gap: 9px; max-width: 340px; font-size: .89rem; font-style: normal; }
+.footer-contact a { display: flex; align-items: flex-start; gap: 8px; }
+.footer-contact a:hover { text-decoration: underline; }
+.footer-contact svg { flex: none; color: #ff7887; margin-top: 2px; }
 .back-top { display: grid; place-items: center; width: 41px; height: 41px; background: #bd1830; border-radius: 5px; }
 .copyright { padding-block: 16px; border-top: 1px solid #ffffff25; color: #ddd6da; font-size: .82rem; }
 dialog { width: min(550px, calc(100% - 30px)); max-height: calc(100dvh - 30px); margin: auto; border: 0; border-radius: 9px; color: #18181e; }
