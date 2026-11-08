@@ -131,6 +131,7 @@ function App() {
           {courses.filter(course => courseEstimates[course.id]).map(course => {
             const { fee, hours } = courseEstimates[course.id]
             return <article className="card price-card" key={course.id}>
+              <div className="price-photo"><img src={'/course-' + course.id + '.jpg'} alt="" loading="lazy" decoding="async"/></div>
               <div className="price-badge"><strong>From {rupees.format(fee)}</strong><span>Per person</span></div>
               <h3>{course.name}</h3>
               <p>{course.summary}</p>
