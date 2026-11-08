@@ -99,7 +99,7 @@ function App() {
       </div>
 
       <section id="about" className="wrap section about grid gap-10 lg:grid-cols-2 lg:items-center">
-        <div className="about-image"><img src="/lesson.png" alt="A learner practising with a driving instructor" loading="lazy"/><span><Route size={24}/> The road starts here</span></div>
+        <div className="about-image"><img src="/about-driving.webp" alt="A learner practising with a driving instructor" loading="lazy"/><span><Route size={24}/> The road starts here</span></div>
         <div><Heading eyebrow="About SMS" title="From first lesson to everyday driving">Learn what to do before you move off, how to handle the car in traffic, and how to practise the manoeuvres you’ll use every day.</Heading>
           <ul className="checklist"><li><Check size={18}/> Step-by-step practice for beginners</li><li><Check size={18}/> Focused lessons for returning drivers</li><li><Check size={18}/> Road awareness and safer driving habits</li></ul>
           <a href="#services" className="text-link">Explore our services <ArrowRight size={17}/></a>
