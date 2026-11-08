@@ -67,6 +67,57 @@ function StatCounter({ value, suffix, decimals = 0 }) {
   </strong>
 }
 
+const studentReviews = [
+  'A learner who passed their driving test praised the instructors for staying calm, explaining clearly, and helping them prepare.',
+  'A student who passed on the first attempt described the lessons as professional and said they built confidence behind the wheel.',
+  'A learner credited patient instruction and practical safety tips with helping them manage nerves on test day.',
+]
+const reviewSource = 'https://threebestrated.in/driving-schools-in-thiruvananthapuram-kl'
+const googleListing = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('SMS Motor Driving School, ' + footerAddress)
+
+function StudentReviews() {
+  const [active, setActive] = useState(0)
+  const [paused, setPaused] = useState(false)
+  const carousel = useRef(null)
+
+  useEffect(() => {
+    if (paused) return
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const timer = setInterval(() => {
+      if (document.hidden || reducedMotion.matches || carousel.current.matches(':hover, :focus-within')) return
+      setActive(current => (current + 1) % studentReviews.length)
+    }, 5500)
+    return () => clearInterval(timer)
+  }, [paused])
+
+  function move(step) {
+    setActive(current => (current + step + studentReviews.length) % studentReviews.length)
+  }
+
+  return <section id="reviews" className="section wrap" aria-labelledby="reviews-title">
+    <Heading eyebrow="Real Students" title={<span id="reviews-title">What Our Students Say</span>}/>
+    <div className="review-carousel" ref={carousel}>
+      <article className="review-slide" key={active}>
+        <span className="review-quote" aria-hidden="true">“</span>
+        <div>
+          <span className="review-kicker">Student review summary</span>
+          <p>{studentReviews[active]}</p>
+          <a className="text-link" href={reviewSource}>Read the original on ThreeBestRated <ArrowRight size={16} aria-hidden="true"/></a>
+        </div>
+      </article>
+      <div className="review-controls">
+        <a className="text-link" href={googleListing}>Find us on Google Maps <ArrowRight size={16} aria-hidden="true"/></a>
+        <div className="review-navigation">
+          <button className="button small secondary" aria-label="Previous review" onClick={() => move(-1)}><ArrowLeft size={17} aria-hidden="true"/></button>
+          <span>{active + 1} / {studentReviews.length}</span>
+          <button className="button small secondary" aria-label="Next review" onClick={() => move(1)}><ArrowRight size={17} aria-hidden="true"/></button>
+          <button className="button small secondary" onClick={() => setPaused(current => !current)}>{paused ? 'Play' : 'Pause'}</button>
+        </div>
+      </div>
+    </div>
+  </section>
+}
+
 function App() {
   const [slide, setSlide] = useState(0)
   const [menu, setMenu] = useState(false)
@@ -239,6 +290,8 @@ function App() {
         <span className="tile-icon">{index === 0 ? <CarFront size={25}/> : <Route size={25}/>}</span><h3>{item.name}</h3><p>{item.summary}</p>
         <div className="card-actions"><button className="text-link" onClick={() => setDetail(item)}>See options <ArrowRight size={16}/></button><button className="button small secondary" onClick={() => enquire(item.id)}>Enquire</button></div>
       </article>)}</section>
+
+      <StudentReviews/>
 
       <section id="faq" className="section tinted"><div className="wrap grid gap-8 lg:grid-cols-[1fr_1.4fr]">
         <Heading eyebrow="Good to know" title="Frequently asked questions">Find out what to expect before you book your first lesson.</Heading>
