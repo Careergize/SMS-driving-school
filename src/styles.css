@@ -90,13 +90,20 @@ button { cursor: pointer; }
 .programme-action button { position: relative; display: inline-flex; align-items: center; gap: 12px; background: #bd1830; color: white; font-size: .89rem; font-weight: 800; padding: 19px 58px 19px 28px; clip-path: polygon(0 0, 75% 0, 100% 100%, 0 100%); }
 .programme-action button:hover { background: #991225; }
 .programme-action button:focus-visible { outline: 0; box-shadow: inset 0 0 0 4px #ffb4be; }
-.card-label { color: #a7152c; font-size: .69rem; font-weight: 800; letter-spacing: .09em; text-transform: uppercase; }
 .card-actions { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: auto; padding-top: 19px; }
 .dark { background: #1d1c24; color: #fff; }
 .dark .section-heading p { color: #e2d9de; }
-.price-card { background: #292831; border-color: #ffffff24; }
-.price-card .card-label, .price-card .checklist svg { color: #ff8897; }
-.price-card .checklist { font-size: .9rem; }
+.course-pricing { background: #f9f3f4; }
+.pricing-subtitle { display: inline-block; color: #a7152c; font-size: .64em; letter-spacing: -.025em; margin-top: 8px; }
+.price-card { display: flex; flex-direction: column; border-top: 3px solid #bd1830; }
+.price-badge { align-self: flex-start; background: #bd1830; color: #fff; padding: 9px 30px 9px 14px; clip-path: polygon(0 0, 88% 0, 100% 100%, 0 100%); }
+.price-badge strong, .price-badge span { display: block; }
+.price-badge strong { font-size: 1.17rem; }
+.price-badge span { font-size: .77rem; }
+.price-card p { margin-bottom: 20px; }
+.price-actions { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; margin-top: auto; padding-top: 14px; border-top: 1px solid #eee4e6; }
+.price-actions > span { display: inline-flex; align-items: center; gap: 7px; font-size: .88rem; font-weight: 750; }
+.price-actions > span svg { color: #bd1830; }
 .extras { border-top: 3px solid #bd1830; }
 .faq details { background: white; border: 1px solid #eee4e6; border-radius: 6px; margin-bottom: 9px; padding: 15px 17px; }
 .faq summary { list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 12px; font-weight: 800; }

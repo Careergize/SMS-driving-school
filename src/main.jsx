@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { ArrowLeft, ArrowRight, ArrowUp, BookOpen, CarFront, Check, ChevronDown, Clock, GraduationCap, IdCard, Mail, MapPin, Menu, MessageCircle, Phone, Plus, Route, ShieldCheck, X } from 'lucide-react'
-import { articles, courses, extras, faqs, school, services } from './content'
+import { articles, courseEstimates, courses, extras, faqs, school, services } from './content'
 import './styles.css'
 
 const slides = [
@@ -10,6 +10,9 @@ const slides = [
   { title: 'Build good habits.', accent: 'Drive for life.', description: 'Get comfortable with road signs, everyday manoeuvres and the decisions that make a safer driver.' },
 ]
 const offerings = [...courses, ...services, ...extras]
+const rupees = new Intl.NumberFormat('en-IN', {
+  style: 'currency', currency: 'INR', maximumFractionDigits: 0,
+})
 const featuredProgrammes = [
   { id: 'super-learner', imagePosition: 'left' },
   { id: 'extended', imagePosition: 'center' },
@@ -120,6 +123,27 @@ function App() {
         })}</div>
       </div></section>
 
+      <section id="pricing" className="section programmes course-pricing" aria-labelledby="pricing-title"><div className="wrap">
+        <Heading eyebrow="Pick Your Pace" title={<span id="pricing-title">Car Driving Courses in Kerala<br/><span className="pricing-subtitle">From First Lesson to Permanent Licence</span></span>}>
+          Indicative prices and durations. Enquire to confirm current SMS fees and lesson schedules.
+        </Heading>
+        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          {courses.filter(course => courseEstimates[course.id]).map(course => {
+            const { fee, hours } = courseEstimates[course.id]
+            return <article className="card price-card" key={course.id}>
+              <div className="price-badge"><strong>From {rupees.format(fee)}</strong><span>Per person</span></div>
+              <h3>{course.name}</h3>
+              <p>{course.summary}</p>
+              <div className="price-actions">
+                <span><Clock size={17} aria-hidden="true"/> {hours} hours</span>
+                <button className="text-link" onClick={() => enquire(course.id)} aria-label={'Enquire about ' + course.name}>Enquire <ArrowRight size={17}/></button>
+              </div>
+            </article>
+          })}
+        </div>
+        <div className="mt-5 flex flex-wrap gap-3">{courses.filter(course => !courseEstimates[course.id]).map(course => <button className="button small secondary" key={course.id} onClick={() => setDetail(course)}>{course.name} <ArrowRight size={16}/></button>)}</div>
+      </div></section>
+
       <section id="services" className="section wrap">
         <Heading eyebrow="Our services" title="Build skills beyond the basics" />
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{services.map((item, index) => {
@@ -127,12 +151,6 @@ function App() {
           return <article className="card" key={item.id}><span className="tile-icon"><Icon size={24}/></span><h3>{item.name}</h3><p>{item.summary}</p><button className="text-link mt-5" onClick={() => setDetail(item)}>Learn more <ArrowRight size={16}/></button></article>
         })}</div>
       </section>
-
-      <section id="pricing" className="section dark"><div className="wrap">
-        <Heading eyebrow="Course comparison" title="Find the right amount of practice">Ask for a quote to confirm the fee, schedule and vehicle options for your programme.</Heading>
-        <div className="grid gap-4 md:grid-cols-3">{courses.slice(0, 3).map(course => <article className="card price-card" key={course.id}><span className="card-label">{course.label}</span><h3>{course.name}</h3><ul className="checklist">{course.skills.map(skill => <li key={skill}><Check size={16}/>{skill}</li>)}</ul><button className="button small" onClick={() => enquire(course.id)}>Request a quote <ArrowRight size={16}/></button></article>)}</div>
-        <div className="mt-5 flex flex-wrap gap-3">{courses.slice(3).map(course => <button className="button small" key={course.id} onClick={() => setDetail(course)}>{course.name} <ArrowRight size={16}/></button>)}</div>
-      </div></section>
 
       <section className="wrap section grid gap-6 md:grid-cols-2" aria-label="Car and travel enquiries">{extras.map((item, index) => <article className="card extras" id={item.id} key={item.id}>
         <span className="tile-icon">{index === 0 ? <CarFront size={25}/> : <Route size={25}/>}</span><h3>{item.name}</h3><p>{item.summary}</p>

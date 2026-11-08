@@ -6,6 +6,12 @@ export const courses = [
   { id: 'two-wheeler', name: 'Two-Wheeler Training', label: 'MCWG / MCWOG', summary: 'Ask about training for geared motorcycles or scooters.', skills: ['Balance and low-speed control', 'Progressive braking and safe turns', 'Traffic observation and road position'] },
 ]
 
+export const courseEstimates = {
+  learner: { fee: 5406, hours: 16 },
+  'super-learner': { fee: 7420, hours: 21 },
+  extended: { fee: 9540, hours: 26 },
+}
+
 export const services = [
   { id: 'licence', name: 'RTO Licence Assistance', summary: 'Ask about learner and permanent licence support for cars and two-wheelers, including paperwork and preparing for the practical test.' },
   { id: 'simulator', name: 'Simulator Training', summary: 'Explore a low-pressure way to practise basic controls and routines before moving onto the road. Ask about simulator availability.' },
