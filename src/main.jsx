@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
-import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, BookOpen, CarFront, Check, ChevronDown, Clock, GraduationCap, IdCard, Mail, MapPin, Menu, MessageCircle, Phone, Route, ShieldCheck, X } from 'lucide-react'
+import { ArrowLeft, ArrowRight, ArrowUp, BookOpen, CarFront, Check, ChevronDown, Clock, GraduationCap, IdCard, Mail, MapPin, Menu, MessageCircle, Phone, Plus, Route, ShieldCheck, X } from 'lucide-react'
 import { articles, courses, extras, faqs, school, services } from './content'
 import './styles.css'
 
@@ -10,6 +10,11 @@ const slides = [
   { title: 'Build good habits.', accent: 'Drive for life.', description: 'Get comfortable with road signs, everyday manoeuvres and the decisions that make a safer driver.' },
 ]
 const offerings = [...courses, ...services, ...extras]
+const featuredProgrammes = [
+  { id: 'super-learner', imagePosition: 'left' },
+  { id: 'extended', imagePosition: 'center' },
+  { id: 'learner', imagePosition: 'right' },
+]
 const nav = [
   ['Home', 'home'], ['About', 'about'], ['Services', 'services', services],
   ['Courses', 'courses', courses], ['Blog', 'blog'], ['New Cars', 'cars'],
@@ -101,14 +106,18 @@ function App() {
         </div>
       </section>
 
-      <section id="courses" className="section tinted"><div className="wrap">
-        <Heading eyebrow="Our programmes" title="Choose the right driving course">Compare what you’ll practise and enquire about current fees and lesson availability.</Heading>
-        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">{courses.map((course, index) => <article className="card course-card" key={course.id}>
-          <div className="flex items-center justify-between"><span className="tile-icon"><CarFront size={25}/></span><span className="ordinal">0{index + 1}</span></div>
-          <span className="card-label">{course.label}</span><h3>{course.name}</h3><p>{course.summary}</p>
-          <div className="card-actions"><button className="text-link" onClick={() => setDetail(course)}>Course details <ArrowRight size={16}/></button><button className="button small secondary" onClick={() => enquire(course.id)}>Enquire</button></div>
-        </article>)}</div>
-        <a className="text-link mt-7" href="#pricing">Compare course options <ArrowDown size={16}/></a>
+      <section id="courses" className="section programmes" aria-labelledby="programmes-title"><div className="wrap">
+        <Heading eyebrow="Our Programmes" title={<span id="programmes-title">Choose the Programme That Matches Your Pace</span>}/>
+        <div className="grid gap-7 md:grid-cols-2 lg:grid-cols-3">{featuredProgrammes.map(({ id, imagePosition }) => {
+          const course = courses.find(item => item.id === id)
+          return <article className="programme-card" key={id}>
+            <div className="programme-photo" aria-hidden="true"><div style={{ backgroundPosition: imagePosition + ' center' }}/></div>
+            <div className="programme-copy"><h3>{course.name}</h3><p>{course.summary}</p></div>
+            <div className="programme-action">
+              <button aria-label={'Read more about ' + course.name} onClick={() => setDetail(course)}>Read More <Plus size={17}/></button>
+            </div>
+          </article>
+        })}</div>
       </div></section>
 
       <section id="services" className="section wrap">
@@ -122,6 +131,7 @@ function App() {
       <section id="pricing" className="section dark"><div className="wrap">
         <Heading eyebrow="Course comparison" title="Find the right amount of practice">Ask for a quote to confirm the fee, schedule and vehicle options for your programme.</Heading>
         <div className="grid gap-4 md:grid-cols-3">{courses.slice(0, 3).map(course => <article className="card price-card" key={course.id}><span className="card-label">{course.label}</span><h3>{course.name}</h3><ul className="checklist">{course.skills.map(skill => <li key={skill}><Check size={16}/>{skill}</li>)}</ul><button className="button small" onClick={() => enquire(course.id)}>Request a quote <ArrowRight size={16}/></button></article>)}</div>
+        <div className="mt-5 flex flex-wrap gap-3">{courses.slice(3).map(course => <button className="button small" key={course.id} onClick={() => setDetail(course)}>{course.name} <ArrowRight size={16}/></button>)}</div>
       </div></section>
 
       <section className="wrap section grid gap-6 md:grid-cols-2" aria-label="Car and travel enquiries">{extras.map((item, index) => <article className="card extras" id={item.id} key={item.id}>

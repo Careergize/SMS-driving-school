@@ -76,11 +76,21 @@ button { cursor: pointer; }
 .card { background: #fff; border: 1px solid #eee4e6; border-radius: 8px; padding: 23px; }
 .card h3 { font-weight: 850; font-size: 1.27rem; letter-spacing: -.025em; line-height: 1.2; margin-top: 14px; }
 .card p { font-size: .93rem; }
-.course-card { display: flex; flex-direction: column; }
-.ordinal { font-weight: 850; font-size: 1.3rem; color: #885b62; }
+.programmes .section-heading { max-width: 680px; text-align: center; margin: 0 auto 42px; }
+.programmes .eyebrow::after { content: ''; width: 27px; height: 2px; background: currentColor; }
+.programme-card { display: flex; flex-direction: column; background: white; box-shadow: 4px 4px 40px #00000019; }
+.programme-photo { height: 260px; overflow: hidden; }
+.programme-photo > div { height: 100%; background: #272126 url('/programmes.png') no-repeat; background-size: 300% auto; transition: transform .5s ease; }
+.programme-card:hover .programme-photo > div { transform: scale(1.07); }
+.programme-copy { position: relative; width: min(92%, 340px); margin-top: -23px; background: white; padding: 20px clamp(20px, 2.6vw, 40px) 24px; }
+.programme-copy h3 { font-size: 1.45rem; font-weight: 850; line-height: 1.15; letter-spacing: -.025em; }
+.programme-copy p { color: #5d5962; font-size: .9rem; line-height: 1.8; margin-top: 12px; }
+.programme-action { position: relative; margin-top: auto; }
+.programme-action::before { content: ''; position: absolute; right: 8%; top: 48%; width: 22%; height: 6px; background: #eee4e6; transform: skewX(30deg); }
+.programme-action button { position: relative; display: inline-flex; align-items: center; gap: 12px; background: #bd1830; color: white; font-size: .89rem; font-weight: 800; padding: 19px 58px 19px 28px; clip-path: polygon(0 0, 75% 0, 100% 100%, 0 100%); }
+.programme-action button:hover { background: #991225; }
+.programme-action button:focus-visible { outline: 0; box-shadow: inset 0 0 0 4px #ffb4be; }
 .card-label { color: #a7152c; font-size: .69rem; font-weight: 800; letter-spacing: .09em; text-transform: uppercase; }
-.course-card .card-label { margin-top: 19px; }
-.course-card h3 { margin-top: 6px; }
 .card-actions { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: auto; padding-top: 19px; }
 .dark { background: #1d1c24; color: #fff; }
 .dark .section-heading p { color: #e2d9de; }
