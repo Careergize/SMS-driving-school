@@ -146,6 +146,26 @@ function App() {
         <div className="mt-5 flex flex-wrap gap-3">{courses.filter(course => !courseEstimates[course.id]).map(course => <button className="button small secondary" key={course.id} onClick={() => setDetail(course)}>{course.name} <ArrowRight size={16}/></button>)}</div>
       </div></section>
 
+      <section className="rto-banner" aria-labelledby="rto-title">
+        <div className="rto-banner-backdrop dark">
+          <div className="wrap rto-banner-inner">
+            <h2 id="rto-title">Most of Our Students Clear the RTO Test on Their First Attempt</h2>
+            <a className="button" href="#contact">Start Learning <ArrowRight size={17} aria-hidden="true"/></a>
+          </div>
+        </div>
+        <ul className="wrap rto-highlights">
+          {[
+            [GraduationCap, '10000+', 'Students Enrolled'],
+            [BookOpen, '7000+', 'Classes Completed'],
+            [ShieldCheck, '4.9★', 'Justdial Rating'],
+            [IdCard, '4+', 'RTO-Certified Instructors'],
+          ].map(([Icon, value, label]) => <li key={label}>
+            <span className="rto-highlight-icon"><Icon size={38} strokeWidth={1.5} aria-hidden="true"/></span>
+            <div className="rto-highlight-copy"><strong>{value}</strong><span>{label}</span></div>
+          </li>)}
+        </ul>
+      </section>
+
       <section id="services" className="section wrap">
         <Heading eyebrow="Our services" title="Build skills beyond the basics" />
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{services.map((item, index) => {

@@ -106,6 +106,21 @@ button { cursor: pointer; }
 .price-actions { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; margin-top: auto; padding-top: 14px; border-top: 1px solid #eee4e6; }
 .price-actions > span { display: inline-flex; align-items: center; gap: 7px; font-size: .88rem; font-weight: 750; }
 .price-actions > span svg { color: #bd1830; }
+.rto-banner-backdrop { background: linear-gradient(#14141cdb, #14141cdb), #1d1c24 url('/about-driving.webp') center 45% / cover no-repeat; }
+.rto-banner-inner { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 24px; padding-block: clamp(40px, 5vw, 76px) clamp(110px, 13vw, 220px); }
+.rto-banner-inner h2 { flex: 1 1 650px; max-width: 900px; font-size: clamp(2rem, 3.2vw, 3.5rem); font-weight: 850; line-height: 1.14; letter-spacing: -.04em; }
+.rto-banner-inner .button { min-height: 58px; padding-inline: 28px; border-radius: 0; }
+.rto-highlights { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; position: relative; margin-top: -72px; }
+.rto-highlights li { display: flex; flex-direction: column; }
+.rto-highlight-icon { display: grid; place-items: center; position: relative; z-index: 1; width: 80px; height: 77px; margin-bottom: -5px; background: #fff; color: #bd1830; border-top: 5px solid; border-right: 5px solid; }
+.rto-highlight-copy { display: flex; flex-wrap: wrap; align-items: center; align-content: center; flex: 1; gap: 6px 14px; padding: clamp(12px, 2vw, 26px); background: #fff; border-top: 5px solid #bd1830; box-shadow: 0 12px 36px #2a20221b; }
+.rto-highlight-copy strong { font-size: clamp(1.65rem, 2.6vw, 2.8rem); line-height: 1.05; letter-spacing: -.04em; }
+.rto-highlight-copy span { flex: 1 1 5rem; }
+.rto-highlight-copy span { color: #5d5962; font-size: .9rem; line-height: 1.4; }
+@media (min-width: 768px) {
+  .rto-banner-inner h2 { flex-basis: 60%; }
+  .rto-highlights { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(16px, 3vw, 40px); }
+}
 .extras { border-top: 3px solid #bd1830; }
 .faq details { background: white; border: 1px solid #eee4e6; border-radius: 6px; margin-bottom: 9px; padding: 15px 17px; }
 .faq summary { list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 12px; font-weight: 800; }
