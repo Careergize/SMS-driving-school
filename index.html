@@ -1,2 +1,50 @@
 <!doctype html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="description" content="Explore driving programmes and prepare for your first lesson with SMS Motor Driving School."><link rel="icon" href="/sms-logo.jpg"><title>SMS Motor Driving School | Learn to Drive</title></head><body><div id="root"></div><script type="module" src="/src/main.jsx"></script></body></html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Explore driving programmes and prepare for your first lesson with SMS Motor Driving School.">
+  <link rel="icon" href="/sms-logo.jpg">
+  <title>SMS Motor Driving School | Learn to Drive</title>
+  <style>
+    .site-loader {
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: grid;
+      place-content: center;
+      justify-items: center;
+      gap: 16px;
+      background: #fff;
+      color: #18181e;
+      font: 600 .9rem Arial, sans-serif;
+      text-align: center;
+    }
+    .site-loader img { display: block; width: min(240px, 65vw); height: auto; }
+    .site-loader-spinner {
+      box-sizing: border-box;
+      width: 36px;
+      height: 36px;
+      border: 3px solid #f4d5da;
+      border-top-color: #bd1830;
+      border-radius: 50%;
+      animation: site-loader-spin .8s linear infinite;
+    }
+    @keyframes site-loader-spin { to { transform: rotate(360deg); } }
+    @media (prefers-reduced-motion: reduce) {
+      .site-loader-spinner { animation: none; }
+    }
+  </style>
+  <noscript><style>.site-loader { display: none; }</style></noscript>
+</head>
+<body>
+  <div id="root">
+    <div class="site-loader" role="status">
+      <img src="/sms-logo.jpg" width="521" height="383" alt="SMS Motor Driving School">
+      <span class="site-loader-spinner" aria-hidden="true"></span>
+      <span>Loading website…</span>
+    </div>
+  </div>
+  <noscript>Please enable JavaScript to view the SMS Motor Driving School website.</noscript>
+  <script type="module" src="/src/main.jsx"></script>
+</body>
+</html>
