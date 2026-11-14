@@ -83,51 +83,32 @@ function StatCounter({ value, suffix, decimals = 0 }) {
 }
 
 const studentReviews = [
-  'A learner who passed their driving test praised the instructors for staying calm, explaining clearly, and helping them prepare.',
-  'A student who passed on the first attempt described the lessons as professional and said they built confidence behind the wheel.',
-  'A learner credited patient instruction and practical safety tips with helping them manage nerves on test day.',
+  { name: 'Sowmya S M', date: '26 May 2025', summary: 'Sowmya credited Saju and Sanoj for their patient instruction and said she finished the course feeling confident behind the wheel.' },
+  { name: 'Navaneeth Sm', date: '10 Dec 2024', summary: 'Navaneeth appreciated the breadth of the driving lessons and the service from instructors he felt he could trust.' },
+  { name: 'Shajila Nikhil', date: '12 Aug 2024', summary: 'Shajila found the staff helpful, the cars easy to drive and well maintained, and the training location easy to reach.' },
 ]
-const reviewSource = 'https://threebestrated.in/driving-schools-in-thiruvananthapuram-kl'
-const googleListing = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('SMS Motor Driving School, ' + footerAddress)
+const reviewSource = 'https://www.justdial.com/Thiruvananthapuram/SMS-Motor-Driving-School-Near-Canara-Bank-Pattoor-Pattoor/0471PX471-X471-170916114525-A3S1_BZDET/reviews'
 
 function StudentReviews() {
-  const [active, setActive] = useState(0)
-  const [paused, setPaused] = useState(false)
-  const carousel = useRef(null)
-
-  useEffect(() => {
-    if (paused) return
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
-    const timer = setInterval(() => {
-      if (document.hidden || reducedMotion.matches || carousel.current.matches(':hover, :focus-within')) return
-      setActive(current => (current + 1) % studentReviews.length)
-    }, 5500)
-    return () => clearInterval(timer)
-  }, [paused])
-
-  function move(step) {
-    setActive(current => (current + step + studentReviews.length) % studentReviews.length)
-  }
-
   return <section id="reviews" className="section wrap" aria-labelledby="reviews-title">
-    <Heading eyebrow="Real Students" title={<span id="reviews-title">What Our Students Say</span>}/>
-    <div className="review-carousel" ref={carousel}>
-      <article className="review-slide" key={active}>
-        <span className="review-quote" aria-hidden="true">“</span>
-        <div>
-          <span className="review-kicker">Student review summary</span>
-          <p>{studentReviews[active]}</p>
-          <a className="text-link" href={reviewSource}>Read the original on ThreeBestRated <ArrowRight size={16} aria-hidden="true"/></a>
-        </div>
-      </article>
-      <div className="review-controls">
-        <a className="text-link" href={googleListing}>Find us on Google Maps <ArrowRight size={16} aria-hidden="true"/></a>
-        <div className="review-navigation">
-          <button className="button small secondary" aria-label="Previous review" onClick={() => move(-1)}><ArrowLeft size={17} aria-hidden="true"/></button>
-          <span>{active + 1} / {studentReviews.length}</span>
-          <button className="button small secondary" aria-label="Next review" onClick={() => move(1)}><ArrowRight size={17} aria-hidden="true"/></button>
-          <button className="button small secondary" onClick={() => setPaused(current => !current)}>{paused ? 'Play' : 'Pause'}</button>
-        </div>
+    <Heading eyebrow="Testimonials" title={<span id="reviews-title">What Our Students Say</span>}/>
+    <div className="testimonial-overview">
+      <strong>4.9 <span aria-hidden="true">★</span><span className="sr-only"> out of 5</span></strong>
+      <span>1,892 ratings on Justdial</span>
+      <a className="text-link" href={reviewSource}>Read all reviews <ArrowRight size={16} aria-hidden="true"/></a>
+    </div>
+    <div className="testimonial-window">
+      <div className="testimonial-track">
+        {[false, true].map(copy => <div className="testimonial-group" key={String(copy)} aria-hidden={copy || undefined}>
+          {studentReviews.map(({ name, date, summary }) => <article className="card testimonial-card" key={name}>
+            <header>
+              <span className="testimonial-initials" aria-hidden="true">{name.split(' ').slice(0, 2).map(part => part[0]).join('')}</span>
+              <div><h3>{name}</h3><small>{date} · Justdial</small></div>
+            </header>
+            <p>{summary}</p>
+            <small>Review summary</small>
+          </article>)}
+        </div>)}
       </div>
     </div>
   </section>

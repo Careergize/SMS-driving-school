@@ -19,6 +19,23 @@ Open [the website](http://127.0.0.1:4173) or [the staff portal](http://127.0.0.1
 Use `npm run dev:site` for public-site editing with live reload. Both local frontend servers use the Django catalogue and enquiry endpoints. Set `SMS_BACKEND_URL` in the frontend terminal before startup if Django listens on a different origin.
 
 Copy `.env.example` to `.env.local` to set contact details. An explicit `VITE_SMS_ENQUIRY_URL` takes precedence over local enquiry delivery. Standalone static builds use the bundled catalogue and the configured enquiry endpoint, WhatsApp, email, or downloadable draft.
+## Serve the staff portal in production
+
+The static `dist` upload serves the public website. Staff sign-in and dashboard requests require the Node server and a running Django backend.
+
+On the server, build the frontend and run `npm run dev` under a process manager from the frontend directory. Set `SMS_BACKEND_URL` if Django uses a different origin from `http://127.0.0.1:8000`. Keep Node and Django on private interfaces behind the HTTPS web server.
+
+Keep the public site's static configuration and forward these paths to Node. For Nginx, with Node on its default port, add this inside the existing HTTPS server block:
+
+```nginx
+location ~ ^/(login$|dashboard$|logout$|vehicle-bills/|assistant-reports/) {
+    proxy_pass http://127.0.0.1:4173;
+    proxy_set_header Host 127.0.0.1:4173;
+}
+```
+
+The upstream Host header matches the Node server's local host check. Serve the full `dist` directory for the shared logo, photos, and JavaScript assets. After applying the configuration, open `/login` on the live site, sign in with a Django staff account, and verify the dashboard and sign-out redirect.
+
 ## Ask Maya
 
 Open **Ask Maya** at the lower right of any dashboard page. The staff assistant reads the current Django records for attendance, pending and paid fees, driving lessons, fuel, and other dashboard reports. Include a branch, date in `YYYY-MM-DD`, or month such as `November 2026` to narrow the request. Each reply offers a PDF of its report. The portal keeps up to 20 replies for the current sign-in session.
