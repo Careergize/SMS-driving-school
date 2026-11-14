@@ -6,11 +6,12 @@ export const courses = [
   { id: 'two-wheeler', name: 'Two-Wheeler Training', label: 'MCWG / MCWOG', summary: 'Ask about training for geared motorcycles or scooters.', skills: ['Balance and low-speed control', 'Progressive braking and safe turns', 'Traffic observation and road position'] },
 ]
 
-export const courseEstimates = {
-  learner: { fee: 5406, hours: 16 },
-  'super-learner': { fee: 7420, hours: 21 },
-  extended: { fee: 9540, hours: 26 },
-}
+export const fees = [
+  { label: 'LMV', description: 'Light motor vehicle training', amount: 11000, image: '/fee-lmv.jpg' },
+  { label: 'MCWG', description: 'Motorcycle with gear training', amount: 8000, image: '/fee-mcwg.jpg' },
+  { label: 'MCWOG', description: 'Motorcycle without gear training', amount: 6000, image: '/fee-mcwog.jpg' },
+  { label: 'LL Fee & Registration', description: "Learner's licence fee and registration", amount: 2000, image: '/fee-registration.jpg' },
+]
 
 export const services = [
   { id: 'licence', name: 'RTO Licence Assistance', summary: 'Ask about learner and permanent licence support for cars and two-wheelers, including paperwork and preparing for the practical test.' },
@@ -38,12 +39,15 @@ export const faqs = [
   ['Can I book a refresher lesson?', 'Choose the Advanced & Refresher Programme and tell us what you want to practise, such as parking, junctions or driving in heavy traffic.'],
 ]
 
+const localApi = import.meta.env?.DEV || globalThis.document?.querySelector('meta[name="sms-local-api"]')
+
 export const school = {
-  email: import.meta.env.VITE_SMS_EMAIL?.trim(),
-  phone: import.meta.env.VITE_SMS_PHONE?.trim(),
-  whatsapp: import.meta.env.VITE_SMS_WHATSAPP?.replace(/\D/g, ''),
-  address: import.meta.env.VITE_SMS_ADDRESS?.trim(),
-  hours: import.meta.env.VITE_SMS_HOURS?.trim(),
-  endpoint: import.meta.env.VITE_SMS_ENQUIRY_URL?.trim(),
+  email: import.meta.env?.VITE_SMS_EMAIL?.trim(),
+  phone: import.meta.env?.VITE_SMS_PHONE?.trim(),
+  whatsapp: import.meta.env?.VITE_SMS_WHATSAPP?.replace(/\D/g, ''),
+  address: import.meta.env?.VITE_SMS_ADDRESS?.trim(),
+  hours: import.meta.env?.VITE_SMS_HOURS?.trim(),
+  endpoint: import.meta.env?.VITE_SMS_ENQUIRY_URL?.trim() || (localApi ? '/api/enquiries/' : ''),
+  catalogEndpoint: localApi ? '/api/catalog/' : '',
 }
 

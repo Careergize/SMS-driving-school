@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { ArrowLeft, ArrowRight, ArrowUp, BookOpen, CarFront, Check, ChevronDown, Clock, GraduationCap, IdCard, Mail, MapPin, Menu, MessageCircle, Phone, Plus, Route, ShieldCheck, X } from 'lucide-react'
-import { articles, courseEstimates, courses, extras, faqs, school, services } from './content'
+import { courses, extras, faqs, fees, school, services } from './content'
 import './styles.css'
 
 const slides = [
@@ -9,8 +9,26 @@ const slides = [
   { title: 'Find your pace.', accent: 'Own the road.', description: 'Explore programmes for first-time learners, returning drivers and anyone ready for more practice.' },
   { title: 'Build good habits.', accent: 'Drive for life.', description: 'Get comfortable with road signs, everyday manoeuvres and the decisions that make a safer driver.' },
 ]
-const offerings = [...courses, ...services, ...extras]
+const defaultCatalog = { courses, extras, faqs, services }
+
+function parseCatalog(entries) {
+  const entriesOf = (kind, defaults) => {
+    const order = new Map(defaults.map(({ id }, index) => [id, index]))
+    return entries.filter(entry => entry.kind === kind).map(({ slug, body, skills, ...entry }) => ({
+      ...entry, id: slug, skills: skills.length ? skills : undefined, body: kind === 'article' ? body : undefined,
+    })).sort((a, b) => (order.get(a.id) ?? defaults.length) - (order.get(b.id) ?? defaults.length))
+  }
+  const programmes = entriesOf('programme', courses)
+  return {
+    courses: programmes,
+    services: entriesOf('service', services),
+    extras: entriesOf('extra', extras),
+    faqs: entries.filter(entry => entry.kind === 'faq').map(({ name, summary }) => [name, summary]),
+  }
+}
 const footerAddress = 'First floor, Thankom Towers, TC 82/1095, Pattoor - Vanchiyoor Rd, Vanchiyoor, Thiruvananthapuram, Keralam 695035'
+const blogPage = '/blog/'
+const whatsappEnquiryUrl = 'https://wa.me/919745824345?text=' + encodeURIComponent('Hi SMS Motor Driving School, I’d like to enquire about driving lessons.')
 const rupees = new Intl.NumberFormat('en-IN', {
   style: 'currency', currency: 'INR', maximumFractionDigits: 0,
 })
@@ -18,11 +36,6 @@ const featuredProgrammes = [
   { id: 'super-learner', imagePosition: 'left' },
   { id: 'extended', imagePosition: 'center' },
   { id: 'learner', imagePosition: 'right' },
-]
-const nav = [
-  ['Home', 'home'], ['About', 'about'], ['Services', 'services', services],
-  ['Courses', 'courses', courses], ['Blog', 'blog'], ['New Cars', 'cars'],
-  ['Tours', 'tours'], ['Contact', 'contact'],
 ]
 
 function Heading({ eyebrow, title, children }) {
@@ -118,7 +131,32 @@ function StudentReviews() {
   </section>
 }
 
-function App() {
+function App({ showBlog }) {
+  const pageLink = id => id === 'blog' ? blogPage : (showBlog ? '/#' : '#') + id
+  const [catalog, setCatalog] = useState(defaultCatalog)
+  const { courses, extras, faqs, services } = catalog
+  const offerings = [...courses, ...services, ...extras]
+  const nav = [
+    ['Home', 'home'], ['About', 'about'], ['Services', 'services', services],
+    ['Courses', 'courses', courses], ['Blog', 'blog'], ['New Cars', 'cars'],
+    ['Tours', 'tours'], ['Contact', 'contact'],
+  ]
+
+  useEffect(() => {
+    if (!school.catalogEndpoint) return
+    const controller = new AbortController()
+    async function loadCatalog() {
+      try {
+        const response = await fetch(school.catalogEndpoint, { signal: controller.signal })
+        if (response.ok) setCatalog(parseCatalog(await response.json()))
+      } catch {
+        // Keep the bundled catalogue available if the local API is offline.
+      }
+    }
+    loadCatalog()
+    return () => controller.abort()
+  }, [])
+
   const [slide, setSlide] = useState(0)
   const [menu, setMenu] = useState(false)
   const [dropdown, setDropdown] = useState('')
@@ -178,30 +216,33 @@ function App() {
           {school.hours && <span><Clock size={15} /> {school.hours}</span>}
           {school.address && <span className="max-sm:hidden"><MapPin size={15} /> {school.address}</span>}
         </div>
-        {school.email ? <a href={'mailto:' + school.email}><Mail size={15} /> {school.email}</a> : <a href="#contact"><MessageCircle size={15} /> Enquiries</a>}
+        {school.email ? <a href={'mailto:' + school.email}><Mail size={15} /> {school.email}</a> : <a href={pageLink('contact')}><MessageCircle size={15} /> Enquiries</a>}
       </div></div>
       <div className="wrap navrow">
-        <a className="brand" href="#home" onClick={closeMenu}><img src="/sms-logo.jpg" alt=""/><span><strong>SMS</strong><small>MOTOR DRIVING SCHOOL</small></span></a>
+        <a className="brand" href={pageLink('home')} onClick={closeMenu}><img src="/sms-logo.jpg" alt=""/><span><strong>SMS</strong><small>MOTOR DRIVING SCHOOL</small></span></a>
         <button className="menu-toggle" aria-expanded={menu} aria-controls="primary" aria-label={menu ? 'Close navigation' : 'Open navigation'} onClick={() => setMenu(!menu)}>{menu ? <X /> : <Menu />}</button>
         <nav id="primary" className={menu ? 'nav open' : 'nav'} aria-label="Main navigation" onKeyDown={event => { if (event.key === 'Escape' && dropdown) { document.getElementById('toggle-' + dropdown)?.focus(); setDropdown('') } }}>
           {nav.map(([label, id, items]) => <div className="nav-item" key={id}>
-            <a href={'#' + id} onClick={closeMenu}>{label}</a>
+            <a href={pageLink(id)} onClick={closeMenu}>{label}</a>
             {items && <><button id={'toggle-' + id} className="nav-chevron" aria-label={label + ' options'} aria-expanded={dropdown === id} aria-controls={'menu-' + id} onClick={() => setDropdown(dropdown === id ? '' : id)}><ChevronDown size={14}/></button>
             {dropdown === id && <div id={'menu-' + id} className="dropdown">{items.map(item => <button key={item.id} onClick={() => { closeMenu(); setDetail(item) }}>{item.name}</button>)}</div>}</>}
           </div>)}
         </nav>
-        <a className="button nav-cta" href="#contact">Book a lesson <ArrowRight size={17}/></a>
+        <a className="button nav-cta" href={pageLink('contact')}>Book a lesson <ArrowRight size={17}/></a>
       </div>
     </header>
 
     <main id="main">
+      {showBlog ? <section className="wrap section text-center">
+        <h1>Coming soon</h1>
+      </section> : <>
       <section className="hero" aria-label="Driving school highlights">
         <div className="wrap hero-inner">
           <div className="hero-copy" key={slide} aria-live="polite">
             <span className="eyebrow">Enjoy the art of driving</span>
             <h1>{slides[slide].title}<br/><em>{slides[slide].accent}</em></h1>
             <p>{slides[slide].description}</p>
-            <div className="flex flex-wrap items-center gap-5"><a href="#courses" className="button">Explore courses <ArrowRight size={19}/></a><a className="hero-link" href="#contact">Get in touch <ArrowRight size={17}/></a></div>
+            <div className="flex flex-wrap items-center gap-5"><a href="#courses" className="button">Explore courses <ArrowRight size={19}/></a><a className="hero-link" href={pageLink('contact')}>Get in touch <ArrowRight size={17}/></a></div>
           </div>
           <div className="carousel">
             <div className="flex items-center gap-2">{slides.map((item, index) => <button key={item.title} className={'dot ' + (slide === index ? 'active' : '')} aria-label={'Show slide ' + (index + 1)} aria-pressed={slide === index} onClick={() => setSlide(index)} />)}</div>
@@ -226,6 +267,7 @@ function App() {
         <Heading eyebrow="Our Programmes" title={<span id="programmes-title">Choose the Programme That Matches Your Pace</span>}/>
         <div className="grid gap-7 md:grid-cols-2 lg:grid-cols-3">{featuredProgrammes.map(({ id, imagePosition }) => {
           const course = courses.find(item => item.id === id)
+          if (!course) return null
           return <article className="programme-card" key={id}>
             <div className="programme-photo" aria-hidden="true"><div style={{ backgroundPosition: imagePosition + ' center' }}/></div>
             <div className="programme-copy"><h3>{course.name}</h3><p>{course.summary}</p></div>
@@ -237,32 +279,23 @@ function App() {
       </div></section>
 
       <section id="pricing" className="section programmes course-pricing" aria-labelledby="pricing-title"><div className="wrap">
-        <Heading eyebrow="Pick Your Pace" title={<span id="pricing-title">Car Driving Courses in Kerala<br/><span className="pricing-subtitle">From First Lesson to Permanent Licence</span></span>}>
-          Indicative prices and durations. Enquire to confirm current SMS fees and lesson schedules.
-        </Heading>
-        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {courses.filter(course => courseEstimates[course.id]).map(course => {
-            const { fee, hours } = courseEstimates[course.id]
-            return <article className="card price-card" key={course.id}>
-              <div className="price-photo"><img src={'/course-' + course.id + '.jpg'} alt="" loading="lazy" decoding="async"/></div>
-              <div className="price-badge"><strong>From {rupees.format(fee)}</strong><span>Per person</span></div>
-              <h3>{course.name}</h3>
-              <p>{course.summary}</p>
-              <div className="price-actions">
-                <span><Clock size={17} aria-hidden="true"/> {hours} hours</span>
-                <button className="text-link" onClick={() => enquire(course.id)} aria-label={'Enquire about ' + course.name}>Enquire <ArrowRight size={17}/></button>
-              </div>
-            </article>
-          })}
+        <Heading eyebrow="Pricing" title={<span id="pricing-title">Driving School Fees</span>}/>
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {fees.map(({ label, description, amount, image }) => <article className="card price-card" key={label}>
+            <div className="fee-photo"><img src={image} alt="" loading="lazy" decoding="async"/></div>
+            <h3>{label}</h3>
+            <p>{description}</p>
+            <div className="price-badge"><strong>{rupees.format(amount)}</strong></div>
+          </article>)}
         </div>
-        <div className="mt-5 flex flex-wrap gap-3">{courses.filter(course => !courseEstimates[course.id]).map(course => <button className="button small secondary" key={course.id} onClick={() => setDetail(course)}>{course.name} <ArrowRight size={16}/></button>)}</div>
+        <button className="button mt-5" onClick={() => enquire()}>Enquire <ArrowRight size={17}/></button>
       </div></section>
 
       <section className="rto-banner" aria-labelledby="rto-title">
         <div className="rto-banner-backdrop dark">
           <div className="wrap rto-banner-inner">
             <h2 id="rto-title">Most of Our Students Clear the RTO Test on Their First Attempt</h2>
-            <a className="button" href="#contact">Start Learning <ArrowRight size={17} aria-hidden="true"/></a>
+            <a className="button" href={pageLink('contact')}>Start Learning <ArrowRight size={17} aria-hidden="true"/></a>
           </div>
         </div>
         <ul className="wrap rto-highlights">
@@ -281,7 +314,7 @@ function App() {
       <section id="services" className="section wrap">
         <Heading eyebrow="Our services" title="Build skills beyond the basics" />
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{services.map((item, index) => {
-          const Icon = [IdCard, CarFront, ShieldCheck, BookOpen][index]
+          const Icon = [IdCard, CarFront, ShieldCheck, BookOpen][index % 4]
           return <article className="card" key={item.id}><span className="tile-icon"><Icon size={24}/></span><h3>{item.name}</h3><p>{item.summary}</p><button className="text-link mt-5" onClick={() => setDetail(item)}>Learn more <ArrowRight size={16}/></button></article>
         })}</div>
       </section>
@@ -298,11 +331,6 @@ function App() {
         <div className="faq">{faqs.map(([question, answer]) => <details name="sms-faq" key={question}><summary>{question}<ChevronDown size={19}/></summary><p>{answer}</p></details>)}</div>
       </div></section>
 
-      <section id="blog" className="wrap section">
-        <Heading eyebrow="The driving journal" title="Driving tips and guides"/>
-        <div className="grid gap-5 md:grid-cols-3">{articles.map(article => <article className="card" key={article.id}><span className="tile-icon"><BookOpen size={24}/></span><h3>{article.name}</h3><p>{article.summary}</p><button className="text-link mt-5" onClick={() => setDetail(article)}>Read article <ArrowRight size={16}/></button></article>)}</div>
-      </section>
-
       <section id="contact" className="section contact"><div className="wrap grid gap-9 lg:grid-cols-[1fr_1.25fr]">
         <div><Heading eyebrow="Talk to us" title="Take the first step">Tell us which programme you’re interested in and when you’d like to start.</Heading>
           <div className="contact-links">
@@ -313,19 +341,28 @@ function App() {
             {school.hours && <span><Clock size={18}/>{school.hours}</span>}
           </div>
         </div>
-        <EnquiryForm selected={selected} setSelected={setSelected}/>
+        <EnquiryForm selected={selected} setSelected={setSelected} offerings={offerings}/>
       </div></section>
+      </>}
     </main>
 
     <footer className="dark"><div className="wrap footer-content">
-      <a className="brand" href="#home"><img src="/sms-logo.jpg" alt=""/><span><strong>SMS</strong><small>MOTOR DRIVING SCHOOL</small></span></a>
-      <nav aria-label="Footer navigation" className="flex flex-wrap gap-5">{[['About', 'about'], ['Courses', 'courses'], ['FAQs', 'faq'], ['Contact', 'contact']].map(([label, id]) => <a key={id} href={'#' + id}>{label}</a>)}</nav>
+      <a className="brand" href={pageLink('home')}><img src="/sms-logo.jpg" alt=""/><span><strong>SMS</strong><small>MOTOR DRIVING SCHOOL</small></span></a>
+      <nav aria-label="Footer navigation" className="flex flex-wrap gap-5">{[['About', 'about'], ['Courses', 'courses'], ['FAQs', 'faq'], ['Blog', 'blog'], ['Contact', 'contact']].map(([label, id]) => <a key={id} href={pageLink(id)}>{label}</a>)}</nav>
       <address className="footer-contact">
         <a href={'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(footerAddress)}><MapPin size={17} aria-hidden="true"/>{footerAddress}</a>
         <a href="tel:+919745824345"><Phone size={17} aria-hidden="true"/>9745824345</a>
       </address>
-      <a className="back-top" href="#home" aria-label="Back to top"><ArrowUp size={21}/></a>
+      <a className="back-top" href={pageLink('home')} aria-label="Back to top"><ArrowUp size={21}/></a>
     </div><div className="wrap copyright">© {new Date().getFullYear()} SMS Motor Driving School</div></footer>
+
+    <a className="whatsapp-enquiry" href={whatsappEnquiryUrl} target="_blank" rel="noopener noreferrer" aria-label="Enquire on WhatsApp">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M21.5 11.8a9.5 9.5 0 0 1-14.1 8.3L2.5 21.5l1.4-4.8a9.5 9.5 0 1 1 17.6-4.9Z"/>
+        <path fill="currentColor" stroke="none" d="M8.6 6.8c.3 0 .5.1.6.4l1 2.2c.1.3 0 .5-.2.7l-.7.8c.8 1.6 2 2.7 3.6 3.4l.8-1c.2-.2.4-.3.7-.2l2.2 1c.3.1.4.3.4.6 0 1.2-1 2-2.2 2-3.1 0-7.8-3.8-8.2-7.2-.2-1.3.7-2.7 2-2.7Z"/>
+      </svg>
+      <span>WhatsApp enquiry</span>
+    </a>
 
     <dialog ref={dialog} onClose={() => setDetail(null)} aria-labelledby="detail-title">
       {detail && <div className="dialog-body"><button className="dialog-close" aria-label="Close details" onClick={() => dialog.current.close()}><X size={24}/></button>
@@ -337,7 +374,7 @@ function App() {
   </>
 }
 
-function EnquiryForm({ selected, setSelected }) {
+function EnquiryForm({ selected, setSelected, offerings }) {
   const [status, setStatus] = useState('')
   const [sending, setSending] = useState(false)
   const [draft, setDraft] = useState('')
@@ -400,7 +437,9 @@ const loaderStart = performance.getEntriesByName('site-loader-start', 'mark')[0]
 const remainingLoaderTime = 1200 - (performance.now() - (loaderStart ?? 0))
 
 function renderApp() {
-  createRoot(document.getElementById('root')).render(<App/>)
+  const showBlog = ['/blog', '/blog/instagram'].includes(location.pathname.replace(/\/$/, ''))
+  if (showBlog) document.title = 'Blog | SMS Motor Driving School'
+  createRoot(document.getElementById('root')).render(<App showBlog={showBlog}/>)
 }
 
 if (remainingLoaderTime > 0) {
