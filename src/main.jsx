@@ -28,6 +28,8 @@ function parseCatalog(entries) {
 }
 const footerAddress = 'First floor, Thankom Towers, TC 82/1095, Pattoor - Vanchiyoor Rd, Vanchiyoor, Thiruvananthapuram, Keralam 695035'
 const blogPage = '/blog/'
+const aboutPage = '/about/'
+const instagramProfile = 'https://www.instagram.com/smsmotordrivingschool/'
 const whatsappEnquiryUrl = 'https://wa.me/919745824345?text=' + encodeURIComponent('Hi SMS Motor Driving School, I’d like to enquire about driving lessons.')
 const rupees = new Intl.NumberFormat('en-IN', {
   style: 'currency', currency: 'INR', maximumFractionDigits: 0,
@@ -131,8 +133,38 @@ function StudentReviews() {
   </section>
 }
 
-function App({ showBlog }) {
-  const pageLink = id => id === 'blog' ? blogPage : (showBlog ? '/#' : '#') + id
+function AboutPage() {
+  return <>
+    <section className="wrap section about grid gap-10 lg:grid-cols-2 lg:items-center">
+      <div className="about-page-heading">
+        <span className="eyebrow">Pattoor, Thiruvananthapuram</span>
+        <h1>About SMS Motor Driving School</h1>
+        <p>We offer car and two-wheeler training in Trivandrum. Whether you’re taking your first lesson or getting comfortable behind the wheel again, our programmes help you practise the skills you’ll use on the road.</p>
+        <a className="button mt-5" href="/#courses">Explore programmes <ArrowRight size={17} aria-hidden="true"/></a>
+      </div>
+      <img className="about-page-photo" src="/about-driving.webp" alt=""/>
+    </section>
+    <section className="wrap section">
+      <Heading eyebrow="Training at SMS" title="What you can learn"/>
+      <div className="grid gap-5 md:grid-cols-3">
+        <article className="card"><h3>Car driving</h3><p>Practise starting, stopping, steering, parking and driving in traffic through our light motor vehicle programmes.</p></article>
+        <article className="card"><h3>Two-wheeler training</h3><p>Learn balance, low-speed control and safe braking on a geared motorcycle or an automatic scooter.</p></article>
+        <article className="card"><h3>Learner’s licence</h3><p>Ask us about learner’s licence registration and preparing for your driving test.</p></article>
+      </div>
+    </section>
+    <section className="wrap section">
+      <Heading eyebrow="Visit us" title="Find SMS in Trivandrum">{footerAddress}</Heading>
+      <div className="flex flex-wrap gap-4">
+        <a className="button" href="/#contact">Enquire about lessons <ArrowRight size={17} aria-hidden="true"/></a>
+        <a className="button secondary" href={'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(footerAddress)}>Get directions</a>
+        <a className="button secondary" href={instagramProfile}>Follow us on Instagram</a>
+      </div>
+    </section>
+  </>
+}
+
+function App({ showBlog, showAbout }) {
+  const pageLink = id => ({ blog: blogPage, about: aboutPage })[id] ?? ((showBlog || showAbout ? '/#' : '#') + id)
   const [catalog, setCatalog] = useState(defaultCatalog)
   const { courses, extras, faqs, services } = catalog
   const offerings = [...courses, ...services, ...extras]
@@ -233,7 +265,7 @@ function App({ showBlog }) {
     </header>
 
     <main id="main">
-      {showBlog ? <section className="wrap section text-center">
+      {showAbout ? <AboutPage/> : showBlog ? <section className="wrap section text-center">
         <h1>Coming soon</h1>
       </section> : <>
       <section className="hero" aria-label="Driving school highlights">
@@ -259,7 +291,7 @@ function App({ showBlog }) {
         <div className="about-image"><img src="/about-driving.webp" alt="A learner practising with a driving instructor" loading="lazy"/><span><Route size={24}/> The road starts here</span></div>
         <div><Heading eyebrow="About SMS" title="From first lesson to everyday driving">Learn what to do before you move off, how to handle the car in traffic, and how to practise the manoeuvres you’ll use every day.</Heading>
           <ul className="checklist"><li><Check size={18}/> Step-by-step practice for beginners</li><li><Check size={18}/> Focused lessons for returning drivers</li><li><Check size={18}/> Road awareness and safer driving habits</li></ul>
-          <a href="#services" className="text-link">Explore our services <ArrowRight size={17}/></a>
+          <a href={aboutPage} className="text-link">More about SMS <ArrowRight size={17}/></a>
         </div>
       </section>
 
@@ -437,9 +469,12 @@ const loaderStart = performance.getEntriesByName('site-loader-start', 'mark')[0]
 const remainingLoaderTime = 1200 - (performance.now() - (loaderStart ?? 0))
 
 function renderApp() {
-  const showBlog = ['/blog', '/blog/instagram'].includes(location.pathname.replace(/\/$/, ''))
+  const path = location.pathname.replace(/\/$/, '')
+  const showAbout = path === '/about'
+  const showBlog = ['/blog', '/blog/instagram'].includes(path)
   if (showBlog) document.title = 'Blog | SMS Motor Driving School'
-  createRoot(document.getElementById('root')).render(<App showBlog={showBlog}/>)
+  if (showAbout) document.title = 'About | SMS Motor Driving School, Trivandrum'
+  createRoot(document.getElementById('root')).render(<App showBlog={showBlog} showAbout={showAbout}/>)
 }
 
 if (remainingLoaderTime > 0) {

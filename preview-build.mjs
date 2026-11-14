@@ -28,7 +28,7 @@ const server = createServer(async (request, response) => {
   const pathname = new URL(`http://localhost${request.url}`).pathname
   if (await handlePublicApi(request, response)) return
   if (await handlePortal(pathname, request, response)) return
-  const isPublicPage = ['/', '/blog', '/blog/', '/blog/instagram', '/blog/instagram/'].includes(pathname)
+  const isPublicPage = ['/', '/about', '/about/', '/blog', '/blog/', '/blog/instagram', '/blog/instagram/'].includes(pathname)
   const file = isPublicPage ? '/index.html' : pathname
   if (!/^\/(?:assets\/)?[\w.-]+$/.test(file) || !contentTypes[extname(file)]) {
     response.writeHead(404).end()
