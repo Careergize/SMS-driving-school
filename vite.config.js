@@ -2,6 +2,8 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { handlePublicApi } from './public-api.mjs'
+import { copyFile, mkdir } from 'node:fs/promises'
+import { resolve } from 'node:path'
 
 const localApi = {
   name: 'sms-local-api',
@@ -12,4 +14,16 @@ const localApi = {
   },
 }
 
-export default defineConfig({ plugins: [react(), tailwindcss(), localApi] })
+const publicPages = {
+  name: 'sms-public-pages',
+  apply: 'build',
+  async writeBundle({ dir }) {
+    await Promise.all(['about', 'blog', 'blog/instagram'].map(async route => {
+      const directory = resolve(dir, route)
+      await mkdir(directory, { recursive: true })
+      await copyFile(resolve(dir, 'index.html'), resolve(directory, 'index.html'))
+    }))
+  },
+}
+
+export default defineConfig({ plugins: [react(), tailwindcss(), localApi, publicPages] })
