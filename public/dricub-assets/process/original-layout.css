@@ -1,0 +1,187 @@
+#sms-process{
+	position: relative;
+	padding: 120px 0px;
+}
+
+#sms-process .left-column .inner-box{
+	position: relative;
+	display: block;
+	margin-right: 30px;
+}
+
+#sms-process .left-column .inner-box .sec-title{
+	margin-bottom: 43px;
+}
+
+#sms-process .left-column .inner-box .sec-title h2{
+	margin-bottom: 11px;
+}
+
+#sms-process .left-column .inner-box .image-box{
+	position: relative;
+	display: block;
+	margin-bottom: 33px;
+}
+
+#sms-process .left-column .inner-box .image-box .image{
+	position: relative;
+	display: block;
+}
+
+#sms-process .left-column .inner-box .image-box .image img{
+	width: 100%;
+}
+
+#sms-process .left-column .inner-box .image-box .video-btn{
+	position: absolute;
+	left: 20px;
+	bottom: 20px;
+	z-index: 1;
+}
+
+#sms-process .left-column .inner-box .image-box .video-btn a{
+	position: relative;
+	display: inline-block;
+	width: 90px;
+	height: 52px;
+	font-size: 24px;
+	color: #fff;
+	text-align: center;
+	line-height: 58px;
+	background: rgba(0, 0, 0, 0.50);
+}
+
+#sms-process .left-column .inner-box .image-box .video-btn a:hover{
+	background: rgba(0, 0, 0, 1);
+}
+
+#sms-process .left-column .inner-box .single-item{
+	position: relative;
+	display: block;
+	padding: 0px 0px 0px 75px;
+}
+
+#sms-process .left-column .inner-box .single-item .icon{
+	position: absolute;
+	left: 0px;
+	top: 7px;
+}
+
+#sms-process .left-column .inner-box .single-item h3{
+	position: relative;
+	display: block;
+	font-size: 24px;
+	line-height: 34px;
+	font-weight: 500;
+	margin-bottom: 5px;
+}
+
+#sms-process .left-column .inner-box .single-item p{
+	position: relative;
+	display: block;
+}
+
+#sms-process .left-column .inner-box .single-item p a{
+	position: relative;
+	display: inline-block;
+	margin-left: 8px;
+	font-size: 14px;
+	line-height: 26px;
+	font-family: 'Lexend', sans-serif;
+	font-weight: 700;
+	text-transform: uppercase;
+	color: #121113;
+}
+
+#sms-process .left-column .inner-box .single-item p a i{
+	position: relative;
+	font-size: 10px;
+	margin-right: 6px;
+}
+
+#sms-process .left-column .inner-box .single-item p a:hover{
+
+}
+
+#sms-process .left-column .inner-box .shape{
+	position: absolute;
+	left: -100px;
+	top: 0px;
+	width: 431px;
+	height: 662px;
+	background-repeat: no-repeat;
+}
+
+#sms-process .right-column .inner-box .single-item{
+	position: relative;
+	display: block;
+	max-width: 370px;
+	margin-bottom: 43px;
+}
+
+#sms-process .right-column .inner-box .single-item:nth-child(2){
+	margin-left: 200px;
+}
+
+#sms-process .right-column .inner-box .single-item .count-text{
+	position: absolute;
+	top: -9px;
+	right: 0px;
+	font-size: 115px;
+	line-height: 100px;
+	font-family: 'Lexend', sans-serif;
+	font-weight: 400;
+	color: rgba(255,255,255,1);
+  text-shadow: -1px -1px 0 #e8eaed, 1px -1px 0 #e8eaed, -1px 1px 0 #e8eaed, 1px 1px 0 #e8eaed;
+}
+
+#sms-process .right-column .inner-box .single-item .icon{
+	position: relative;
+	margin-bottom: 27px;
+}
+
+#sms-process .right-column .inner-box .single-item h4{
+	position: relative;
+	display: block;
+	font-size: 20px;
+	line-height: 24px;
+	font-weight: 500;
+	margin-bottom: 14px;
+}
+
+#sms-process .right-column .inner-box .single-item h4 a{
+	display: inline-block;
+	color: #121113;
+}
+
+#sms-process .right-column .inner-box .single-item h4 a:hover{
+
+}
+
+#sms-process .right-column .inner-box .single-item .arrow-shape{
+	position: absolute;
+	right: -174px;
+	top: 42px;
+	width: 145px;
+	height: 130px;
+	background-repeat: no-repeat;
+}
+
+#sms-process .right-column .inner-box .single-item .arrow-shape-2{
+	position: absolute;
+	left: -200px;
+	top: 23px;
+	width: 145px;
+	height: 130px;
+	background-repeat: no-repeat;
+}
+
+#sms-process .right-column .inner-box .btn-box .theme-btn{
+	padding: 13px 40px;
+}
+
+#sms-process .right-column .inner-box .btn-box{
+	padding-top: 10px;
+}
+
+

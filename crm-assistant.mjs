@@ -36,6 +36,7 @@ function dates(question) {
 }
 
 const routes = {
+  enrolments: /\b(enrol\w*|enroll\w*|entroll\w*|admissions?|joined|joinings?)\b/i,
   attendance: /\b(attend\w*|absent|present|unmarked)\b/i,
   fuel: /\b(fuel|petrol|diesel|mileage|km\s*\/\s*l)\b/i,
   maintenance: /\b(maintenance|servic\w*|repairs?|tyres?|batter\w*)\b/i,
@@ -91,9 +92,13 @@ async function optionalModel(question) {
 }
 
 export async function answerQuestion(question, api, selected, previous) {
+  const pendingQuestion = typeof previous === 'object' ? previous?.pendingEnrolment : null
+  const previousQuestion = typeof previous === 'string' ? previous : previous?.question
   const followUp = /^(?:and\b|what about\b|how about\b|for\b)/i.test(question)
-  const context = followUp && previous ? previous : ''
-  const model = Object.entries(routes).find(([, pattern]) => pattern.test(question))
+  const direct = Object.entries(routes).find(([, pattern]) => pattern.test(question))
+  const answeringBranch = pendingQuestion && (!direct || ['branches', 'enrolments'].includes(direct[0]))
+  const context = answeringBranch ? pendingQuestion : followUp && previousQuestion ? previousQuestion : ''
+  const model = answeringBranch ? ['enrolments'] : direct
     ?? Object.entries(routes).find(([, pattern]) => pattern.test(context))
   const ai = model ? null : await optionalModel(question)
   const route = model?.[0] ?? ai?.route
@@ -107,10 +112,14 @@ export async function answerQuestion(question, api, selected, previous) {
   const branches = await api('/api/branches/?is_active=true')
   const findBranch = input => branches.find(item => {
     const value = ' ' + normalized(input) + ' '
-    return [item.name, item.code].some(key => value.includes(' ' + normalized(key) + ' '))
+    return [item.name, item.code, `branch ${Number(item.code.replace(/\D/g, ''))}`].some(key => value.includes(' ' + normalized(key) + ' '))
   })
-  const branch = findBranch(question) ?? (selected && branches.find(item => item.code === selected))
+  const branch = findBranch(question) ?? (route !== 'enrolments' && selected && branches.find(item => item.code === selected))
     ?? findBranch(context)
+  const allBranches = /\b(all|every)\s+(?:the\s+)?branches\b|\bschool[ -]wide\b/i.test(question)
+  if (route === 'enrolments' && !branch && !allBranches) {
+    return { ...report('Which branch?', `Which branch would you like me to check? You can reply with the branch name or code: ${branches.map(item => `${item.name} (${item.code})`).join(', ')}. Or say “all branches”.`), pendingEnrolment: answeringBranch ? pendingQuestion : question }
+  }
   const scope = branch?.name ?? 'All active branches'
   const period = dates(/\b(today|yesterday|tomorrow|month)\b|\d{4}/i.test(question) ? question : question + ' ' + context)
   const scoped = { branch_active: 'true', ...(branch && { branch: branch.code }) }
@@ -149,8 +158,11 @@ export async function answerQuestion(question, api, selected, previous) {
       ['Name', 'Branch', 'Attendance'], rows)
   }
 
-  if (['fees', 'students'].includes(route)) {
-    const students = namedRows(await get('/api/students/'), who)
+  if (['fees', 'students', 'enrolments'].includes(route)) {
+    const allStudents = namedRows(await get('/api/students/'), who)
+    const students = route !== 'fees' && period.from
+      ? allStudents.filter(item => item.enrolled_on >= period.from && item.enrolled_on <= period.to)
+      : allStudents
     const branchName = code => branches.find(item => item.code === code)?.name ?? code
     if (route === 'fees') {
       const paid = /\bpaid\b/i.test(who) && !/\b(unpaid|pending|due|balance)\b/i.test(who)
@@ -164,7 +176,9 @@ export async function answerQuestion(question, api, selected, previous) {
         ['Student', 'Branch', 'Total fee', 'Paid', 'Pending', 'Status'],
         matches.map(item => [item.name, branchName(item.branch), asMoney(item.total_fee), asMoney(item.amount_paid), asMoney(balance(item)), item.payment]))
     }
-    return report('Students', `${scope}. ${students.length} students.`, ['Student', 'ID', 'Branch', 'Course', 'Status', 'Joined'],
+    const coverage = period.from ? ` · ${period.from === period.to ? period.from : period.from + ' to ' + period.to}` : ''
+    const enrolmentSummary = `${students.length === 0 ? 'No students' : students.length + (students.length === 1 ? ' student' : ' students')} enrolled ${branch ? 'at ' + branch.name : 'across all active branches'}${period.from ? period.from === period.to ? ' on ' + period.from : ' from ' + period.from + ' to ' + period.to : ' in total'}.`
+    return report(route === 'enrolments' ? 'Student enrolments' : 'Students', route === 'enrolments' ? enrolmentSummary : `${scope}${coverage}. ${students.length} students${period.from ? ' enrolled in this period' : ''}.`, ['Student', 'ID', 'Branch', 'Course', 'Status', 'Joined'],
       students.map(item => [item.name, item.code, branchName(item.branch), label(item.course), label(item.status), item.enrolled_on]))
   }
 

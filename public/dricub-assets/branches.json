@@ -1,0 +1,54 @@
+{
+  "researchedOn": "2026-11-20",
+  "branches": [
+    {
+      "id": "vanchiyoor",
+      "name": "Vanchiyoor · Pattoor",
+      "phone": "919846024345",
+      "displayPhone": "+91 98460 24345",
+      "address": "First floor, Thankom Towers, TC 82/1095, Pattoor – Vanchiyoor Road, Vanchiyoor, Thiruvananthapuram, Kerala 695035",
+      "mapQuery": "SMS Motor Driving School Thankom Towers Pattoor Vanchiyoor Thiruvananthapuram",
+      "sources": [
+        "https://threebestrated.in/sms-motor-driving-school-driving-schools-thiruvananthapuram-kl-hZ6ZB",
+        "https://www.youtube.com/channel/UCim3zub2QVXGBi4Fssm7sqA"
+      ]
+    },
+    {
+      "id": "kulathoor",
+      "name": "Kulathoor",
+      "phone": "919745824345",
+      "displayPhone": "+91 97458 24345",
+      "address": "99/3619, Attipra, Kulathoor, Thiruvananthapuram, Kerala 695583",
+      "mapQuery": "SMS Motors Driving School 99/3619 Attipra Kulathoor Thiruvananthapuram",
+      "sources": [
+        "https://kazhakuttam.com/listing/sms-motors-driving-school-kulathoor/",
+        "https://www.youtube.com/channel/UCim3zub2QVXGBi4Fssm7sqA"
+      ]
+    },
+    {
+      "id": "peroorkada",
+      "name": "Peroorkada",
+      "phone": "919605224345",
+      "displayPhone": "+91 96052 24345",
+      "address": "Omkaram, Oolanpara, Oolampara Junction, Devapalan Nagar, Devi Nagar, Peroorkada, Thiruvananthapuram, Kerala 695005",
+      "mapQuery": "SMS Motor Driving School Peroorkkada Omkaram Oolampara Junction Thiruvananthapuram",
+      "sources": [
+        "https://drive91.in/thiruvananthapuram/akkulam/sms-motor-driving-school-peroorkkada",
+        "https://www.youtube.com/channel/UCim3zub2QVXGBi4Fssm7sqA"
+      ]
+    },
+    {
+      "id": "manacaud",
+      "name": "Manacaud",
+      "phone": "919846024345",
+      "displayPhone": "+91 98460 24345",
+      "address": null,
+      "mapQuery": null,
+      "contactVia": "Vanchiyoor main office",
+      "sources": [
+        "https://drive91.in/schools?page=2"
+      ],
+      "note": "Branch mentioned in a public listing and acknowledged by the owner; full address and direct phone awaiting owner details."
+    }
+  ]
+}

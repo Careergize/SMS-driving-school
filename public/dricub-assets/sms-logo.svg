@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="218" height="66" viewBox="0 0 218 66" role="img" aria-label="SMS Driving School">
+  <defs><linearGradient id="sign" x2="0" y2="1"><stop stop-color="#ef6167"/><stop offset="1" stop-color="#d32027"/></linearGradient><filter id="shadow"><feDropShadow dx="1" dy="1" stdDeviation="1" flood-opacity=".25"/></filter></defs>
+  <g filter="url(#shadow)"><rect x="9" y="14" width="42" height="42" rx="3" transform="rotate(-38 30 35)" fill="url(#sign)" stroke="#4b4b4b" stroke-width="1.5"/><rect x="13" y="18" width="34" height="34" rx="1" transform="rotate(-38 30 35)" fill="none" stroke="#fca9ad"/><text x="19" y="46" font-family="Arial,sans-serif" font-size="39" font-weight="bold" fill="#fff" transform="rotate(-16 30 35)">L</text></g>
+  <text x="65" y="35" font-family="Arial,sans-serif" font-size="41" font-weight="500" letter-spacing="3" fill="#555">SMS</text>
+  <path d="M65 42H214L199 61H50Z" fill="#505050"/><path d="M60 46H209M54 57H201" stroke="#aaa" stroke-width="1"/>
+  <text x="73" y="55" font-family="Arial,sans-serif" font-size="11" font-weight="700" letter-spacing=".8" fill="#fff">DRIVING SCHOOL</text>
+</svg>

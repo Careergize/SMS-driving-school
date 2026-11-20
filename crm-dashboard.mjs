@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs'
 import { lessonDate, renderDrivingLessons } from './crm-calendar.mjs'
+import { renderLicenceAdmin } from './crm-licences.mjs'
 import { escapeHtml } from './backend-api.mjs'
 import { renderAttendance } from './crm-attendance.mjs'
 import { renderVehicles } from './crm-vehicles.mjs'
@@ -102,18 +103,104 @@ function renderInstructors(branches, selected, filters, instructors) {
     </section>`
 }
 
-function renderEnquiries(enquiries) {
-  const rows = enquiries.map(({ name, phone, email, programme, message, status, created_at }) =>
-    `<tr><th scope="row">${escapeHtml(name)}</th><td>${escapeHtml(phone)}<small>${escapeHtml(email)}</small></td>
-      <td>${escapeHtml(programme)}</td><td>${escapeHtml(message)}</td>
-      <td>${escapeHtml(status)}</td><td>${displayDate(created_at)}</td></tr>`)
-  return `<section class="crm-intro"><h1>Enquiries</h1><p>Requests submitted through the public website.</p></section>
-    <section class="crm-card crm-table" tabindex="0" aria-label="Scrollable enquiry inbox">
-      <table aria-label="Website enquiries">
-        <thead><tr><th>Name</th><th>Contact</th><th>Programme</th><th>Message</th><th>Status</th><th>Received</th></tr></thead>
-        <tbody>${rows.join('') || '<tr><td colspan="6">No enquiries received.</td></tr>'}</tbody>
-      </table>
-    </section>`
+function pendingRegistration({ message, status }) {
+  return message.startsWith('Student registration request\n') && ['new', 'contacted'].includes(status)
+}
+
+function renderEnquiries(enquiries, branches, tab, issue, filters = new URLSearchParams(), students = []) {
+  const pending = enquiries.filter(pendingRegistration)
+  const other = enquiries.filter(enquiry => !pendingRegistration(enquiry))
+  const completedTab = filters.get('enquiry-view') === 'completed'
+  const selectedBranch = filters.get('enquiry-branch') || ''
+  const search = (filters.get('enquiry-search') || '').trim()
+  const studentByCode = new Map(students.map(student => [student.code, student]))
+  const visible = other.filter(enquiry => {
+    if ((enquiry.status === 'closed') !== completedTab) return false
+    if (!completedTab) return true
+    const student = studentByCode.get(`registration-${enquiry.id}`)
+    if (selectedBranch && student?.branch !== selectedBranch) return false
+    return !search || [enquiry.name, enquiry.phone, enquiry.email, student?.name, student?.code].some(value => String(value || '').toLowerCase().includes(search.toLowerCase()))
+  })
+  const branchOptions = branches.map(({ code, name }) =>
+    `<option value="${escapeHtml(code)}">${escapeHtml(name)}</option>`).join('')
+  const statuses = { new: 'New', contacted: 'Processing', closed: 'Enquiry done' }
+
+  function renderCard(enquiry, review = false) {
+    const { id, name, phone, email, programme, message, status, created_at } = enquiry
+    const [, birthDate, notes] = message.match(/^Student registration request\r?\n\s*Date of birth: (\d{4}-\d{2}-\d{2})(?:\r?\n\s*([\s\S]+))?$/) ?? []
+    const statusClass = ['new', 'contacted', 'closed'].includes(status) ? status : 'new'
+    return `<article class="crm-card enquiry-card enquiry-card-${statusClass}" aria-labelledby="enquiry-${id}">
+      <header class="enquiry-card-heading">
+        <div><h3 id="enquiry-${id}">${escapeHtml(name)}</h3><p>${escapeHtml(programme)}</p></div>
+        <span class="enquiry-status enquiry-status-${statusClass}">${escapeHtml(review ? 'Pending approval' : (statuses[status] ?? status))}</span>
+      </header>
+      <dl class="enquiry-details">
+        <div><dt>Phone</dt><dd>${escapeHtml(phone)}</dd></div>
+        ${email ? `<div><dt>Email</dt><dd>${escapeHtml(email)}</dd></div>` : ''}
+        ${birthDate ? `<div><dt>Date of birth</dt><dd>${displayDate(birthDate)}</dd></div>` : ''}
+        <div><dt>Received</dt><dd>${displayDate(created_at)}</dd></div>
+        ${studentByCode.has(`registration-${id}`) ? `<div><dt>Branch</dt><dd>${escapeHtml(branches.find(branch => branch.code === studentByCode.get(`registration-${id}`).branch)?.name || studentByCode.get(`registration-${id}`).branch)}</dd></div>` : ''}
+      </dl>
+      ${(birthDate ? notes : message) ? `<p class="enquiry-message">${escapeHtml(birthDate ? notes : message)}</p>` : ''}
+      ${review && status !== 'closed' ? '<button class="enquiry-processing" type="button" disabled>Processing</button>' : ''}
+      ${!message.startsWith('Student registration request\n') ? `<form class="enquiry-update" method="post" action="/dashboard?tab=enquiries&amp;update-enquiry=${id}">
+        <label>Status<select name="status" aria-label="Enquiry status for ${escapeHtml(name)}">
+          ${[['new', 'New'], ['contacted', 'Processing'], ['closed', 'Enquiry done']].map(([value, label]) => `<option value="${value}"${status === value ? ' selected' : ''}>${label}</option>`).join('')}
+        </select></label>
+        <button class="enquiry-whatsapp" type="submit">Save status</button>
+      </form>` : ''}
+      ${review ? `<form class="enquiry-approval" method="post" action="/dashboard?tab=${tab}&amp;approve=${id}">
+        <label>Branch<select name="branch" required><option value="">Select branch</option>${branchOptions}</select></label>
+        <label>Course<select name="course" required><option value="">Select course</option><option value="manual">Manual car</option><option value="automatic">Automatic car</option><option value="two-wheeler">Two-wheeler</option><option value="refresher">Refresher</option></select></label>
+        <button type="submit" aria-label="Approve registration for ${escapeHtml(name)}">Approve</button>
+      </form>` : ''}
+    </article>`
+  }
+
+  return `<div class="enquiry-inbox${tab === 'enquiries' ? ' enquiry-inbox-primary' : ''}">
+    ${tab === 'enquiries' ? '<header class="crm-intro"><h1>Enquiries</h1><p>Review student registrations and other requests from the website.</p></header>' : ''}
+    ${issue?.approval ? `<p class="error" role="alert">${escapeHtml(issue.approval)}</p>` : ''}
+    <section aria-labelledby="pending-registrations">
+      <div class="enquiry-section-heading"><h2 id="pending-registrations">Pending registrations</h2><span>${pending.length} awaiting approval</span></div>
+      ${pending.length ? `<div class="enquiry-grid">${pending.map(enquiry => renderCard(enquiry, true)).join('')}</div>` : '<p class="crm-card enquiry-empty">No registrations are waiting for approval.</p>'}
+    </section>
+    ${tab === 'enquiries' ? `<section aria-labelledby="other-enquiries">
+      <nav class="enquiry-tabs" aria-label="Enquiry status">
+        <a href="/dashboard?tab=enquiries"${!completedTab ? ' aria-current="page"' : ''}>Other enquiries (${other.filter(enquiry => enquiry.status !== 'closed').length})</a>
+        <a href="/dashboard?tab=enquiries&amp;enquiry-view=completed"${completedTab ? ' aria-current="page"' : ''}>Completed (${other.filter(enquiry => enquiry.status === 'closed').length})</a>
+      </nav>
+      <div class="enquiry-section-heading"><h2 id="other-enquiries">${completedTab ? 'Completed enquiries' : 'Other enquiries'}</h2></div>
+      ${completedTab ? `<form class="crm-filters" method="get" action="/dashboard">
+        <input type="hidden" name="tab" value="enquiries"><input type="hidden" name="enquiry-view" value="completed">
+        <div><label for="enquiry-branch">Branch</label><select id="enquiry-branch" name="enquiry-branch"><option value="">All branches</option>${branches.map(branch => `<option value="${escapeHtml(branch.code)}"${selectedBranch === branch.code ? ' selected' : ''}>${escapeHtml(branch.name)}</option>`).join('')}</select></div>
+        <div><label for="enquiry-search">Search students</label><input id="enquiry-search" name="enquiry-search" type="search" value="${escapeHtml(search)}" placeholder="Name, phone, email or student code"></div>
+        <button type="submit">Search</button><a href="/dashboard?tab=enquiries&amp;enquiry-view=completed">Clear filters</a>
+      </form>` : ''}
+      ${visible.length ? `<div class="enquiry-grid">${visible.map(enquiry => renderCard(enquiry)).join('')}</div>` : `<p class="crm-card enquiry-empty">${completedTab ? 'No completed enquiries match your filters.' : 'No open enquiries received.'}</p>`}
+    </section>` : ''}
+  </div>`
+}
+
+function renderStudentKeys(students, enquiries, branches, filters, issue) {
+  const branch = filters.get('branch') || ''
+  const search = (filters.get('search') || '').trim()
+  const approved = new Set(enquiries.filter(item => item.status === 'closed').map(item => `registration-${item.id}`))
+  const visible = students.filter(student => approved.has(student.code)
+    && (!branch || student.branch === branch)
+    && (!search || [student.name, student.code, student.phone].some(value => String(value || '').toLowerCase().includes(search.toLowerCase()))))
+  return `<header class="crm-intro"><h1>Student keys</h1><p>Issue student login codes for approved registrations. Show the code to share privately, or send it via WhatsApp.</p></header>
+    ${issue?.approval ? `<p class="error" role="alert">${escapeHtml(issue.approval)}</p>` : ''}
+    <form class="crm-filters" method="get" action="/dashboard"><input type="hidden" name="tab" value="student-keys">
+      <div><label for="key-branch">Branch</label><select id="key-branch" name="branch"><option value="">All branches</option>${branches.map(item => `<option value="${escapeHtml(item.code)}"${branch === item.code ? ' selected' : ''}>${escapeHtml(item.name)}</option>`).join('')}</select></div>
+      <div><label for="key-search">Search students</label><input id="key-search" name="search" type="search" value="${escapeHtml(search)}" placeholder="Name, phone or student code"></div>
+      <button type="submit">Search</button><a href="/dashboard?tab=student-keys">Clear filters</a>
+    </form>
+    <div class="enquiry-grid">${visible.map(student => `<article class="crm-card enquiry-card">
+      <h2>${escapeHtml(student.name)}</h2><p>${escapeHtml(student.code)} · ${escapeHtml(branches.find(item => item.code === student.branch)?.name || student.branch)}</p>
+      <p>${escapeHtml(student.phone)}</p><form class="student-key-actions" method="post" action="/dashboard?tab=student-keys&amp;issue-access=${student.code.slice('registration-'.length)}">
+        <button type="submit" name="delivery" value="show">Issue &amp; show code</button>
+        <button class="enquiry-whatsapp" type="submit" name="delivery" value="whatsapp">Issue code via WhatsApp</button>
+      </form></article>`).join('') || '<p class="crm-card enquiry-empty">No approved students match your filters.</p>'}</div>`
 }
 
 function dashboardShell(content, tab, query, username) {
@@ -126,12 +213,14 @@ function dashboardShell(content, tab, query, username) {
       <span class="crm-nav-label">WORKSPACE</span>
       <nav aria-label="Dashboard sections">
         <a href="${overview}#overview"${active('overview')}><span aria-hidden="true">⌂</span> Dashboard</a>
+        <a href="/dashboard?tab=licences"${active('licences')}><span class="licence-nav-icon" aria-hidden="true"></span> Licence &amp; RTO</a>
         <a href="${bookings}"${active('bookings')}><span aria-hidden="true">▤</span> Driving Lessons</a>
         <a href="/dashboard?tab=vehicles${query ? `&amp;${query}` : ''}"${active('vehicles')}><span aria-hidden="true">▰</span> Vehicles</a>
         <a href="/dashboard?tab=attendance${query ? `&amp;${query}` : ''}"${active('attendance')}><span aria-hidden="true">✓</span> Attendance</a>
         <a href="/dashboard?tab=students${query ? `&amp;${query}` : ''}"${active('students')}><span aria-hidden="true">♧</span> Students</a>
         <a href="/dashboard?tab=instructors${query ? `&amp;${query}` : ''}"${active('instructors')}><span aria-hidden="true">♙</span> Instructors</a>
         <a href="/dashboard?tab=enquiries"${active('enquiries')}><span aria-hidden="true">✉</span> Enquiries</a>
+        <a href="/dashboard?tab=student-keys"${active('student-keys')}><span aria-hidden="true">⚿</span> Student keys</a>
         <a href="${overview}#analytics"><span aria-hidden="true">▥</span> Reports</a>
         <a href="${overview}#branches"><span aria-hidden="true">◇</span> Branch comparison</a>
         <a href="${overview}#operations"><span aria-hidden="true">⚙</span> Operations</a>
@@ -139,7 +228,7 @@ function dashboardShell(content, tab, query, username) {
       <div class="crm-side-footer"><a href="/">Public website ↗</a><form method="post" action="/logout"><button type="submit">Sign out</button></form></div>
     </aside>
     <main class="crm-main" id="overview">
-      <div class="crm-top"><span>WORKSPACE / ${tab === 'bookings' ? 'DRIVING LESSONS' : tab.toUpperCase()}</span><span>${username} <b>Staff</b></span></div>
+      <div class="crm-top"><span>WORKSPACE / ${tab === 'student-keys' ? 'STUDENT KEYS' : tab === 'bookings' ? 'DRIVING LESSONS' : tab === 'licences' ? 'LICENCE &amp; RTO' : tab.toUpperCase()}</span><span>${username} <b>Staff</b></span></div>
       ${content}
       <footer class="crm-footer">SMS Motor Driving School · Local CRM</footer>
     </main>
@@ -156,8 +245,16 @@ function chart(rows, series) {
 
 export async function renderDashboard(filters, api, username, issue) {
   const tab = filters.get('tab')
+  if (tab === 'student-keys') {
+    const [students, enquiries, branches] = await Promise.all([api('/api/students/'), api('/api/enquiries/'), api('/api/branches/')])
+    return dashboardShell(renderStudentKeys(students, enquiries, branches, filters, issue), tab, '', username)
+  }
+  if (tab === 'licences') {
+    return dashboardShell(await renderLicenceAdmin(filters, api, issue), tab, '', username)
+  }
   if (tab === 'enquiries') {
-    return dashboardShell(renderEnquiries(await api('/api/enquiries/')), tab, '', username)
+    const [enquiries, branches, students] = await Promise.all([api('/api/enquiries/'), api('/api/branches/'), api('/api/students/')])
+    return dashboardShell(renderEnquiries(enquiries, branches, tab, issue, filters, students), tab, '', username)
   }
   const branches = (await api('/api/branches/?is_active=true')).map(({ code, name, area }) => ({
     id: code, name: escapeHtml(name), label: [name, area].filter(Boolean).map(escapeHtml).join(' · '),
@@ -184,7 +281,9 @@ export async function renderDashboard(filters, api, username, issue) {
       api(`/api/students/?${branchParams}`),
       renderStudentDialog(filters, api, branches, selected, issue),
     ])
-    return dashboardShell(renderStudents(branches, selected, filters, students) + dialog, tab, query, username)
+    const registrations = (await api('/api/enquiries/')).filter(pendingRegistration)
+    const pending = renderEnquiries(registrations, branches.map(({ id, label }) => ({ code: id, name: label })), tab, issue)
+    return dashboardShell(renderStudents(branches, selected, filters, students) + pending + dialog, tab, query, username)
   }
   if (tab === 'instructors') {
     const [instructors, dialog] = await Promise.all([
@@ -201,12 +300,21 @@ export async function renderDashboard(filters, api, username, issue) {
     const today = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Asia/Kolkata' }).format(new Date())
     const base = new Date(snapshot.date || today)
     base.setUTCDate(base.getUTCDate() - (base.getUTCDay() + 6) % 7)
+    const requestedDate = filters.get('date')
+    const requestedDay = /^\d{4}-\d{2}-\d{2}$/.test(requestedDate ?? '') ? new Date(requestedDate) : null
+    const dateWeek = requestedDay && Number.isFinite(requestedDay.getTime()) ? Math.floor((requestedDay - base) / 604800000) : week
     const attendance = filters.get('attendance')
-    branchParams.set('date_from', lessonDate(base, week, 0).toISOString().slice(0, 10))
-    branchParams.set('date_to', lessonDate(base, week, 6).toISOString().slice(0, 10))
-    if (['present', 'absent', 'scheduled'].includes(attendance)) branchParams.set('attendance', attendance)
+    const [students, instructors, vehicles] = await Promise.all([
+      api(`/api/students/?${branchParams}`),
+      api(`/api/instructors/?${branchParams}&status=active`),
+      api(`/api/vehicles/?${branchParams}`),
+    ])
+    branchParams.set('date_from', lessonDate(base, dateWeek, 0).toISOString().slice(0, 10))
+    branchParams.set('date_to', lessonDate(base, dateWeek, 6).toISOString().slice(0, 10))
+    if (['present', 'absent', 'late', 'scheduled'].includes(attendance)) branchParams.set('attendance', attendance)
     const lessons = await api(`/api/lessons/?${branchParams}`)
-    return dashboardShell(renderDrivingLessons(branches, selected, base, week, period, attendance, lessons), tab, query, username)
+    const date = requestedDay && Number.isFinite(requestedDay.getTime()) ? requestedDate : (week === 0 ? today : branchParams.get('date_from'))
+    return dashboardShell(renderDrivingLessons(branches, selected, base, dateWeek, period, attendance, lessons, students.filter(student => student.status !== 'completed'), instructors, vehicles.filter(vehicle => vehicle.status === 'active'), date, issue), tab, query, username)
   }
   const [{ totals, snapshot }, trends, comparison, operations] = await Promise.all([
     dashboard,

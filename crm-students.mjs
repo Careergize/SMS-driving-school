@@ -32,6 +32,7 @@ export function studentAction(filters) {
 function renderDetails(student) {
   const fields = [
     ['Student ID', escapeHtml(student.code)],
+    ['Parivahan application number', valueOr(student.parivahan_application_number)],
     ['Joined', date.format(new Date(student.enrolled_on))],
     ['Branch', [student.branch_name, student.branch_area].filter(Boolean).map(escapeHtml).join(' · ')],
     ['Course', courseLabels[student.course]],
@@ -70,6 +71,7 @@ function renderEdit(student, branches, instructors, url, creating = false) {
     <div class="student-edit-fields">
       ${creating ? input('Student ID', 'code', 'maxlength="32"') : ''}
       ${input('Student name', 'name', 'required maxlength="120"')}
+      ${input('Parivahan application number', 'parivahan_application_number', 'maxlength="40"')}
       ${input('Joining date', 'enrolled_on', 'type="date" required')}
       ${select('Branch', 'branch', [['', 'Choose a branch'], ...branchOptions], true)}
       ${select('Course and vehicle type', 'course', [['', 'Choose a course'], ...Object.entries(courseLabels)], true)}
@@ -125,7 +127,7 @@ export async function renderStudentDialog(filters, api, branches, selected, issu
 
 export function readStudentFields(fields) {
   const data = {}
-  for (const key of ['code', 'name', 'enrolled_on', 'branch', 'course', 'status', 'instructor', 'phone', 'guardian_name', 'guardian_phone', 'payment', 'total_fee', 'amount_paid']) {
+  for (const key of ['code', 'name', 'parivahan_application_number', 'enrolled_on', 'branch', 'course', 'status', 'instructor', 'phone', 'guardian_name', 'guardian_phone', 'payment', 'total_fee', 'amount_paid']) {
     if (fields.has(key)) data[key] = fields.get(key)
   }
   for (const key of ['instructor', 'total_fee', 'amount_paid']) {

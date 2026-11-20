@@ -12,7 +12,7 @@ button { cursor: pointer; }
 .wrap { width: min(1240px, calc(100% - 88px)); margin-inline: auto; }
 .skip { position: absolute; z-index: 20; left: 20px; top: -70px; padding: 10px; background: white; }
 .skip:focus { top: 10px; }
-.topbar { background: #19191f; color: #f1f0f1; font-size: .76rem; font-weight: 600; }
+.topbar { background: #08244e; color: #f1f0f1; font-size: .76rem; font-weight: 600; }
 .topbar .wrap { min-height: 38px; }
 .topbar span, .topbar a { display: inline-flex; align-items: center; gap: 8px; }
 .topbar svg { color: #ff6879; flex: none; }
@@ -186,6 +186,10 @@ dialog::backdrop { background: #15131bc2; }
 .dialog-body .section-heading h2 { font-size: clamp(1.8rem, 5vw, 2.5rem); }
 .dialog-body .section-heading { margin-bottom: 14px; }
 .dialog-close { position: absolute; right: 9px; top: 8px; padding: 4px; }
+.parivahan-upload h2 { margin: 0; font-size: clamp(1.35rem, 4vw, 1.85rem); }
+.parivahan-upload form { display: grid; gap: 1rem; margin-top: 1rem; }
+.parivahan-upload label { display: grid; gap: .4rem; font-weight: 700; }
+.parivahan-upload input { max-width: 100%; font: inherit; }
 
 @media (prefers-reduced-motion: no-preference) {
   .has-entered, .hero-copy, .carousel {

@@ -1,6 +1,8 @@
 import { backendFetch } from './backend-api.mjs'
+import { handleGoogleReviews } from './google-reviews.mjs'
 
 export async function handlePublicApi(request, response) {
+  if (await handleGoogleReviews(request, response)) return true
   const url = new URL(request.url, 'http://localhost')
   const methods = { '/api/catalog/': 'GET', '/api/enquiries/': 'POST' }
   const method = Object.hasOwn(methods, url.pathname) && methods[url.pathname]

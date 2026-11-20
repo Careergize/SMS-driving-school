@@ -3,9 +3,10 @@ import { createRoot } from 'react-dom/client'
 import { ArrowLeft, ArrowRight, ArrowUp, BookOpen, CarFront, Check, ChevronDown, Clock, GraduationCap, IdCard, Mail, MapPin, Menu, MessageCircle, Phone, Plus, Route, ShieldCheck, X } from 'lucide-react'
 import { courses, extras, faqs, fees, school, services } from './content'
 import './styles.css'
+import './dricub-theme.css'
 
 const slides = [
-  { title: 'Learn to drive', accent: 'with confidence.', description: 'From your first time behind the wheel to everyday driving, take it one lesson at a time with SMS Motor Driving School.' },
+  { title: 'Friendly & patient', accent: 'driving instructors.', description: 'From your first time behind the wheel to everyday driving, take it one lesson at a time with SMS Motor Driving School.' },
   { title: 'Find your pace.', accent: 'Own the road.', description: 'Explore programmes for first-time learners, returning drivers and anyone ready for more practice.' },
   { title: 'Build good habits.', accent: 'Drive for life.', description: 'Get comfortable with road signs, everyday manoeuvres and the decisions that make a safer driver.' },
 ]
@@ -144,8 +145,8 @@ function AboutPage() {
   </>
 }
 
-function App({ showBlog, showAbout }) {
-  const pageLink = id => ({ blog: blogPage, about: aboutPage })[id] ?? ((showBlog || showAbout ? '/#' : '#') + id)
+function App({ showBlog, showAbout, showRegistration }) {
+  const pageLink = id => ({ blog: blogPage, about: aboutPage })[id] ?? ((showBlog || showAbout || showRegistration ? '/#' : '#') + id)
   const [catalog, setCatalog] = useState(defaultCatalog)
   const { courses, extras, faqs, services } = catalog
   const offerings = [...courses, ...services, ...extras]
@@ -246,16 +247,25 @@ function App({ showBlog, showAbout }) {
     </header>
 
     <main id="main">
-      {showAbout ? <AboutPage/> : showBlog ? <section className="wrap section text-center">
+      {showRegistration ? <section className="section contact">
+        <div className="wrap grid gap-9 lg:grid-cols-[1fr_1.25fr]">
+          <div>
+            <h1>Student registration</h1>
+            <p>You must be at least 18 years old to register. Choose a driving course and share your contact details. Our staff will contact you to confirm your enrolment.</p>
+            <a href="/login">Back to sign in</a>
+          </div>
+          <EnquiryForm selected={selected} setSelected={setSelected} offerings={courses} registration/>
+        </div>
+      </section> : showAbout ? <AboutPage/> : showBlog ? <section className="wrap section text-center">
         <h1>Coming soon</h1>
       </section> : <>
       <section className="hero" aria-label="Driving school highlights">
         <div className="wrap hero-inner">
           <div className="hero-copy" key={slide} aria-live="polite">
-            <span className="eyebrow">Enjoy the art of driving</span>
+            <span className="eyebrow">Smart drivers start here</span>
             <h1>{slides[slide].title}<br/><em>{slides[slide].accent}</em></h1>
             <p>{slides[slide].description}</p>
-            <div className="flex flex-wrap items-center gap-5"><a href="#courses" className="button">Explore courses <ArrowRight size={19}/></a><a className="hero-link" href={pageLink('contact')}>Get in touch <ArrowRight size={17}/></a></div>
+            <div className="flex flex-wrap items-center gap-5"><a href="#courses" className="button">Explore courses</a><a className="hero-link" href={pageLink('contact')}>Get in touch</a></div>
           </div>
           <div className="carousel">
             <div className="flex items-center gap-2">{slides.map((item, index) => <button key={item.title} className={'dot ' + (slide === index ? 'active' : '')} aria-label={'Show slide ' + (index + 1)} aria-pressed={slide === index} onClick={() => setSlide(index)} />)}</div>
@@ -264,9 +274,9 @@ function App({ showBlog, showAbout }) {
         </div>
       </section>
 
-      <div className="wrap benefits">
+      <div className="benefits-band"><div className="wrap benefits">
         {[[CarFront, 'Practical driving', 'Get comfortable behind the wheel'], [GraduationCap, 'Learn at your pace', 'Programmes for different skill levels'], [IdCard, 'Licence guidance', 'Get help planning your next step']].map(([Icon, title, caption]) => <div key={title}><span className="tile-icon"><Icon size={25}/></span><div><strong>{title}</strong><p>{caption}</p></div></div>)}
-      </div>
+      </div></div>
 
       <section id="about" className="wrap section about grid gap-10 lg:grid-cols-2 lg:items-center">
         <div className="about-image"><img src="/about-driving.webp" alt="A learner practising with a driving instructor" loading="lazy"/><span><Route size={24}/> The road starts here</span></div>
@@ -275,6 +285,11 @@ function App({ showBlog, showAbout }) {
           <a href={aboutPage} className="text-link">More about SMS <ArrowRight size={17}/></a>
         </div>
       </section>
+
+      <section className="lesson-banner" aria-label="Book driving lessons"><div className="wrap lesson-banner-inner">
+        <div><h2>Schedule your driving lessons with us!</h2><p>Find your programme. Meet your instructor. Get ready for the road.</p></div>
+        <a href="tel:+919745824345"><Phone size={28} aria-hidden="true"/><span><small>Call to book a lesson</small>97458 24345</span></a>
+      </div></section>
 
       <section id="courses" className="section programmes" aria-labelledby="programmes-title"><div className="wrap">
         <Heading eyebrow="Our Programmes" title={<span id="programmes-title">Choose the Programme That Matches Your Pace</span>}/>
@@ -387,17 +402,67 @@ function App({ showBlog, showAbout }) {
   </>
 }
 
-function EnquiryForm({ selected, setSelected, offerings }) {
+const registrationPrefix = 'Student registration request\n\n'
+const registrationBirthDateLabel = 'Date of birth: '
+const parivahanApplicationLabel = 'Parivahan application number: '
+
+function EnquiryForm({ selected, setSelected, offerings, registration = false }) {
   const [status, setStatus] = useState('')
   const [sending, setSending] = useState(false)
   const [draft, setDraft] = useState('')
+  const [parivahanApplication, setParivahanApplication] = useState('')
+  const [pdfStatus, setPdfStatus] = useState('')
+  const [readingPdf, setReadingPdf] = useState(false)
+  const enquiryForm = useRef(null)
+  const pdfDialog = useRef(null)
   const canSend = Boolean(school.endpoint || school.whatsapp || school.email)
+  const today = new Date()
+  const cutoffYear = today.getFullYear() - 18
+  const cutoffDay = Math.min(today.getDate(), new Date(cutoffYear, today.getMonth() + 1, 0).getDate())
+  const latestBirthDate = [cutoffYear, String(today.getMonth() + 1).padStart(2, '0'), String(cutoffDay).padStart(2, '0')].join('-')
+  const maxNotes = 2000 - (registration ? registrationPrefix.length + registrationBirthDateLabel.length + 14 + parivahanApplicationLabel.length + 40 : 0)
+
+  async function importParivahan(event) {
+    event.preventDefault()
+    const file = new FormData(event.currentTarget).get('parivahanPdf')
+    if (!file?.size || file.size > 5 * 1024 * 1024 || !/\.pdf$/i.test(file.name)) {
+      setPdfStatus('Choose a PDF file up to 5 MB.')
+      return
+    }
+    setPdfStatus('')
+    setReadingPdf(true)
+    try {
+      const { readParivahanPdf } = await import('./parivahan-pdf.mjs')
+      const details = await readParivahanPdf(file)
+      if (!details) {
+        setPdfStatus('We could not find the applicant’s name and date of birth. Use the original Parivahan PDF or enter your details manually.')
+        return
+      }
+      for (const field of ['name', 'birthDate', 'phone', 'email']) {
+        if (details[field]) enquiryForm.current.elements.namedItem(field).value = details[field]
+      }
+      setParivahanApplication(details.application)
+      pdfDialog.current.close()
+      setStatus(details.birthDate > latestBirthDate
+        ? 'Details imported. You must be at least 18 to register.'
+        : 'Details imported. Review them, complete any missing fields, and submit your registration.')
+    } catch {
+      setPdfStatus('This PDF could not be read. Use the original, unlocked Parivahan PDF or enter your details manually.')
+    } finally {
+      setReadingPdf(false)
+    }
+  }
 
   async function submit(event) {
     event.preventDefault()
     const data = Object.fromEntries(new FormData(event.currentTarget))
     data.programme = offerings.find(item => item.id === data.programme)?.name || 'General enquiry'
-    const message = ['Enquiry for SMS Motor Driving School', '', ...Object.entries(data).map(([key, value]) => key[0].toUpperCase() + key.slice(1) + ': ' + value)].join('\n')
+    if (registration) {
+      const registrationNotes = [parivahanApplication && parivahanApplicationLabel + parivahanApplication, data.message.trim()].filter(Boolean)
+      data.message = [registrationPrefix + registrationBirthDateLabel + data.birthDate, ...registrationNotes].join('\n\n')
+      delete data.birthDate
+    }
+    const message = [registration ? 'Student registration for SMS Motor Driving School' : 'Enquiry for SMS Motor Driving School', '', ...Object.entries(data).map(([key, value]) => key[0].toUpperCase() + key.slice(1) + ': ' + value)].join('\n')
     setStatus('')
     if (!school.endpoint) {
       if (school.whatsapp) window.location.href = 'https://wa.me/' + school.whatsapp + '?text=' + encodeURIComponent(message)
@@ -412,9 +477,9 @@ function EnquiryForm({ selected, setSelected, offerings }) {
     try {
       const response = await fetch(school.endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) })
       if (!response.ok) throw new Error('Enquiry failed')
-      setStatus('Your enquiry was sent to SMS Motor Driving School.')
+      setStatus(registration ? 'Registration request received. Our staff will contact you to confirm enrolment.' : 'Your enquiry was sent to SMS Motor Driving School.')
     } catch {
-      setStatus('Your enquiry could not be sent. Please try again.')
+      setStatus(registration ? 'Your registration request could not be sent. Please try again.' : 'Your enquiry could not be sent. Please try again.')
     } finally {
       setSending(false)
     }
@@ -429,21 +494,45 @@ function EnquiryForm({ selected, setSelected, offerings }) {
     setTimeout(() => URL.revokeObjectURL(url), 1000)
   }
 
-  return <form className="enquiry" onSubmit={submit}>
+  return <><form className="enquiry" ref={enquiryForm} onSubmit={submit}>
     <div className="grid gap-4 sm:grid-cols-2">
       <label>Full name<input name="name" autoComplete="name" required maxLength={120} placeholder="Your name"/></label>
+      {registration && <label>Date of birth<input name="birthDate" type="date" autoComplete="bday" min="0001-01-01" max={latestBirthDate} required/></label>}
       <label>Phone number<input name="phone" type="tel" autoComplete="tel" required minLength={7} maxLength={25} placeholder="Your phone number"/></label>
       <label>Email address<input name="email" type="email" autoComplete="email" maxLength={160} placeholder="Your email address"/></label>
-      <label>I'm interested in<select name="programme" value={selected} onChange={event => setSelected(event.target.value)}><option value="">General enquiry</option>{offerings.map(item => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label>
+      <label>{registration ? 'Driving course' : "I'm interested in"}<select name="programme" required={registration} value={selected} onChange={event => setSelected(event.target.value)}><option value="">{registration ? 'Choose a course' : 'General enquiry'}</option>{offerings.map(item => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label>
     </div>
-    <label>Message<textarea name="message" rows="4" maxLength={2000} placeholder="Preferred dates, driving experience or any questions"/></label>
+    {parivahanApplication && <p className="form-note">Parivahan application number: <strong>{parivahanApplication}</strong>{' '}<button type="button" className="text-link" onClick={() => setParivahanApplication('')}>Remove</button></p>}
+    <label>Message<textarea name="message" rows="4" maxLength={maxNotes} placeholder="Preferred dates, driving experience or any questions"/></label>
     {!canSend && <p className="form-note">Online enquiries are being set up. You can prepare and download a draft here.</p>}
     <div className="flex flex-wrap gap-3">
-      <button className="button" disabled={sending}>{sending ? 'Sending…' : school.endpoint ? 'Send enquiry' : school.whatsapp ? 'Continue to WhatsApp' : school.email ? 'Open email draft' : 'Prepare enquiry'} <ArrowRight size={18}/></button>
+      <button className="button" disabled={sending}>{sending ? 'Sending…' : school.endpoint ? (registration ? 'Submit registration request' : 'Send enquiry') : school.whatsapp ? 'Continue to WhatsApp' : school.email ? 'Open email draft' : 'Prepare enquiry'} <ArrowRight size={18}/></button>
+      {registration && <button type="button" className="button secondary" disabled={sending} onClick={() => {
+        setPdfStatus('')
+        pdfDialog.current.querySelector('form').reset()
+        pdfDialog.current.showModal()
+      }}>Register using Parivahan</button>}
       {draft && <button type="button" className="button secondary" onClick={downloadDraft}>Download draft</button>}
     </div>
     <p className="form-status" role="status">{status}</p>
   </form>
+    {registration && <dialog ref={pdfDialog} aria-labelledby="parivahan-upload-title" onCancel={event => {
+      if (readingPdf) event.preventDefault()
+    }}>
+      <div className="dialog-body parivahan-upload">
+        <h2 id="parivahan-upload-title">Upload your Parivahan PDF</h2>
+        <p>Use the original PDF from Parivahan, up to 5 MB. We’ll fill in your registration details so you can review them before submitting.</p>
+        <form onSubmit={importParivahan}>
+          <label>Parivahan PDF<input name="parivahanPdf" type="file" accept=".pdf,application/pdf" required disabled={readingPdf}/></label>
+          {pdfStatus && <p role="alert" className="form-status">{pdfStatus}</p>}
+          <div className="flex flex-wrap gap-3">
+            <button type="submit" className="button" disabled={readingPdf}>{readingPdf ? 'Reading PDF…' : 'Use PDF details'}</button>
+            <button type="button" className="button secondary" disabled={readingPdf} onClick={() => pdfDialog.current.close()}>Cancel</button>
+          </div>
+        </form>
+      </div>
+    </dialog>}
+  </>
 }
 
 const loaderStart = performance.getEntriesByName('site-loader-start', 'mark')[0]?.startTime
@@ -452,10 +541,12 @@ const remainingLoaderTime = 1200 - (performance.now() - (loaderStart ?? 0))
 function renderApp() {
   const path = location.pathname.replace(/\/$/, '')
   const showAbout = path === '/about'
+  const showRegistration = path === '/register'
   const showBlog = ['/blog', '/blog/instagram'].includes(path)
   if (showBlog) document.title = 'Blog | SMS Motor Driving School'
   if (showAbout) document.title = 'About | SMS Motor Driving School, Trivandrum'
-  createRoot(document.getElementById('root')).render(<App showBlog={showBlog} showAbout={showAbout}/>)
+  if (showRegistration) document.title = 'Student registration | SMS Motor Driving School'
+  createRoot(document.getElementById('root')).render(<App showBlog={showBlog} showAbout={showAbout} showRegistration={showRegistration}/>)
 }
 
 if (remainingLoaderTime > 0) {

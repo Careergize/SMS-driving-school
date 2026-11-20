@@ -1,0 +1,69 @@
+@import url('/dricub-assets/process/fonts.css');
+body.home { overflow-x: clip; }
+.sms-cinematic { --hero-unit: 1px; --scene-bg: #b31c2e; position: relative; left: 50%; width: 100vw; margin-left: -50vw; height: 740px; min-height: 520px; overflow: hidden; isolation: isolate; background: var(--scene-bg); color: #fff; font-family: 'Lexend', Arial, sans-serif; touch-action: pan-y; }
+.sms-cinematic *, .sms-cinematic *::before, .sms-cinematic *::after { box-sizing: border-box; }
+.sms-hero-scenes, .sms-hero-scene, .sms-hero-ui { position: absolute; inset: 0; }
+.sms-hero-scene { background: var(--bg); overflow: hidden; visibility: hidden; }
+.sms-hero-scene.is-current { visibility: visible; }
+.sms-hero-frame { position: absolute; width: calc(1440 * var(--hero-unit)); height: calc(900 * var(--hero-unit)); left: 50%; top: 50%; transform: translate(-50%, -50%); }
+.sms-hero-layer { position: absolute; inset: 0; will-change: transform; }
+.sms-hero-word { position: absolute; left: 50%; top: calc(205 * var(--hero-unit)); transform: translateX(-50%); font-size: calc(var(--word-size, 330) * var(--hero-unit)); line-height: 1; font-weight: 700; color: white; letter-spacing: -.055em; white-space: nowrap; }
+.sms-hero-word[data-long] { top: calc(255 * var(--hero-unit)); }
+.sms-hero-sprite { position: absolute; left: calc(var(--x) * var(--hero-unit)); top: calc(var(--y) * var(--hero-unit)); width: calc(var(--size) * var(--hero-unit)); height: calc(var(--size) * var(--hero-unit)); transform: rotate(var(--rotation, 0deg)); }
+.sms-hero-sprite > span { display: block; width: 100%; height: 100%; background-image: var(--sheet); background-size: 200% 200%; background-position: var(--crop-x, 0%) var(--crop-y, 0%); background-repeat: no-repeat; }
+.sms-hero-vehicle { filter: drop-shadow(0 24px 24px #22091430); }
+.sms-hero-vehicle > span { animation: none; }
+.sms-hero-prop > span { animation: sms-float 5s ease-in-out infinite alternate; animation-delay: var(--delay, 0s); }
+.sms-hero-corner { filter: blur(calc(8 * var(--hero-unit))); opacity: .8; }
+.sms-hero-ground { position: absolute; left: calc(335 * var(--hero-unit)); top: calc(710 * var(--hero-unit)); width: calc(770 * var(--hero-unit)); height: calc(55 * var(--hero-unit)); background: radial-gradient(ellipse, #25071f45, transparent 68%); filter: blur(7px); }
+.sms-hero-ui { z-index: 10; pointer-events: none; text-shadow: 0 1px 7px #1c091b25; }
+.sms-hero-ui button, .sms-hero-ui a { pointer-events: auto; color: #fff; font: inherit; background: none; border: 0; border-radius: 0; cursor: pointer; text-decoration: none; }
+.sms-hero-signature { position: absolute; top: 32px; left: 40px; font-size: 26px; font-weight: 700; line-height: 1; letter-spacing: -.04em; }
+.sms-hero-signature > span { display: block; font: 500 10px/1.6 'Inter', sans-serif; margin-top: 7px; letter-spacing: .18em; }
+.sms-hero-tabs { position: absolute; top: 27px; left: 50%; transform: translateX(-50%); display: flex; gap: 36px; white-space: nowrap; }
+.sms-hero-tabs button { padding: 12px 0; font-size: 14px; font-weight: 500; opacity: .7; }
+.sms-hero-tabs button[aria-pressed='true'], .sms-hero-tabs button:hover { opacity: 1; }
+.sms-hero-underline { position: absolute; height: 2px; background: white; left: 0; bottom: 3px; transition: width .65s cubic-bezier(.22,.8,.3,1), transform .65s cubic-bezier(.22,.8,.3,1); }
+.sms-hero-ui .sms-hero-pause { position: absolute; top: 35px; right: 40px; font-size: 12px; padding: 8px; text-transform: uppercase; letter-spacing: .12em; }
+.sms-hero-caption { position: absolute; left: 40px; bottom: 114px; max-width: 260px; }
+.sms-hero-caption h1 { margin: 0 0 12px; padding: 0; color: #fff; font: 500 23px/1.35 'Lexend', sans-serif; letter-spacing: -.035em; }
+.sms-hero-caption p { margin: 0; font: 400 13px/1.8 'Inter', sans-serif; color: #fff; opacity: .85; }
+.sms-hero-prev, .sms-hero-next { position: absolute; bottom: 32px; width: 56px; height: 48px; display: grid; place-items: center; }
+.sms-hero-prev { left: 28px; }
+.sms-hero-next { right: 28px; }
+.sms-hero-ui .sms-hero-book { position: absolute; left: 50%; bottom: 43px; transform: translateX(-50%); font: 600 13px/1.5 'Lexend', sans-serif; letter-spacing: .18em; padding: 12px 0; white-space: nowrap; }
+.sms-hero-book > span { display: block; height: 1px; width: 44px; margin: 12px auto 0; background: white; transition: width .25s; }
+.sms-hero-book:hover > span { width: 100%; }
+.sms-hero-pagination { position: absolute; right: 42px; bottom: 115px; font-size: 12px; letter-spacing: .16em; }
+.sms-cinematic :focus-visible { outline: 2px solid white; outline-offset: 5px; }
+.sms-hero-static { padding: 160px 30px; text-align: center; }
+.sms-hero-static h2 { color: white; }
+.sms-cinematic.is-paused .sms-hero-prop > span { animation-play-state: paused; }
+@keyframes sms-float { from { transform: translateY(-7px) rotate(-3deg); } to { transform: translateY(7px) rotate(3deg); } }
+@media (max-width: 900px) {
+  .sms-hero-tabs { top: 83px; gap: 25px; }
+  .sms-hero-signature { left: 24px; top: 26px; }
+  .sms-hero-ui .sms-hero-pause { right: 18px; top: 23px; }
+  .sms-hero-caption { left: 24px; bottom: 110px; max-width: 230px; }
+  .sms-hero-caption h1 { font-size: 20px; }
+  .sms-hero-caption p { display: none; }
+  .sms-hero-corner { display: none; }
+  .sms-hero-pagination { right: 26px; bottom: 125px; }
+}
+@media (max-width: 540px) {
+  .sms-cinematic { min-height: 570px; }
+  .sms-hero-frame { top: 45%; }
+  .sms-hero-tabs { gap: 19px; top: 78px; }
+  .sms-hero-tabs button { font-size: 12px; }
+  .sms-hero-signature { font-size: 24px; }
+  .sms-hero-signature > span { font-size: 9px; }
+  .sms-hero-caption { bottom: 102px; max-width: 270px; }
+  .sms-hero-caption h1 { font-size: 18px; }
+  .sms-hero-prev { left: 10px; bottom: 15px; }
+  .sms-hero-next { right: 10px; bottom: 15px; }
+  .sms-hero-ui .sms-hero-book { bottom: 24px; font-size: 10px; letter-spacing: .1em; }
+  .sms-hero-pagination { right: 24px; bottom: 105px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sms-cinematic *, .sms-cinematic *::after { animation: none !important; transition: none !important; }
+}

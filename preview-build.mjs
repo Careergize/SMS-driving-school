@@ -3,6 +3,7 @@ import { createServer } from 'node:http'
 import { extname } from 'node:path'
 import { handlePortal } from './staff-portal.mjs'
 import { handlePublicApi } from './public-api.mjs'
+import { handleThemeSite } from './theme-site.mjs'
 
 const port = Number(process.env.SMS_PREVIEW_PORT ?? 4173)
 if (!Number.isInteger(port) || port < 1 || port > 65535) {
@@ -28,9 +29,10 @@ const server = createServer(async (request, response) => {
   const pathname = new URL(`http://localhost${request.url}`).pathname
   if (await handlePublicApi(request, response)) return
   if (await handlePortal(pathname, request, response)) return
-  const isPublicPage = ['/', '/about', '/about/', '/blog', '/blog/', '/blog/instagram', '/blog/instagram/'].includes(pathname)
+  if (await handleThemeSite(request, response)) return
+  const isPublicPage = ['/', '/about', '/about/', '/blog', '/blog/', '/blog/instagram', '/blog/instagram/', '/register', '/register/'].includes(pathname)
   const file = isPublicPage ? '/index.html' : pathname
-  if (!/^\/(?:assets\/)?[\w.-]+$/.test(file) || !contentTypes[extname(file)]) {
+  if (!/^\/(?:assets\/|learner-signs\/)?[\w.-]+$/.test(file) || !contentTypes[extname(file)]) {
     response.writeHead(404).end()
     return
   }

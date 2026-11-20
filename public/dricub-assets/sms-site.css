@@ -1,0 +1,116 @@
+/* Only SMS branding and local form behavior extend the original demo styles. */
+#tt-header,
+#tt-header .tt-header-wrapper-bottom,
+#tt-header .tt-menu-stuck-row,
+#tt-header .tt-menu.open-menu { background-color: var(--sms-nav-bg, #b31c2e); transition: background-color 970ms cubic-bezier(.65, 0, .25, 1); }
+#tt-header .tt-menu-stuck-row { transition: background-color 970ms cubic-bezier(.65, 0, .25, 1), top .2s linear, opacity .2s linear; }
+#tt-header .tt-menu > ul > li > a,
+#tt-header .tt-menu > ul > li.current-menu-item > a,
+#tt-header .tt-menu > ul > li.is-hover > a,
+#tt-header .tt-menu > ul > li.active > a,
+#tt-header .tt-menu .menu-link span::before,
+#tt-header .tt-icon-subMenu,
+#tt-header .tt-toggle-menu { color: #fff; }
+#tt-header .tt-menu > ul > li > a:hover { color: #fff; text-decoration: underline; text-underline-offset: 7px; }
+#tt-header .tt-menu .sub-menu { background-color: var(--sms-nav-bg, #b31c2e); background-image: linear-gradient(#0002, #0002); border-color: #ffffff30; transition: background-color 970ms cubic-bezier(.65, 0, .25, 1); }
+#tt-header .tt-menu .sub-menu a { color: #fff; }
+#tt-header .tt-menu .sub-menu a:hover { background: #0003; color: #fff; }
+#tt-header .tt-menu > ul .sub-menu li:not(:last-child) { border-bottom-color: #ffffff25; }
+#tt-header .tt-menu-stuck-row { box-shadow: 0 2px 12px #560f2026; }
+#tt-header .tt-logo { width: 160px; height: 118px; top: 0; overflow: visible; }
+#tt-header .tt-logo .logo-icon { position: static; display: block; width: 100%; height: 100%; max-height: none; margin: 0; object-fit: contain; background: transparent; }
+#tt-header .tt-menu-stuck-row .tt-logo { width: 80px; height: 59px; }
+#tt-header .tt-menu-stuck-row .tt-logo .logo-icon { max-height: none; }
+@media (max-width: 767px) {
+  #tt-header .tt-logo { width: 124px; height: 92px; }
+  #tt-header .tt-logo .logo-icon { max-height: none; margin: 0; }
+}
+.sms-form-status { margin-top: 16px; color: #4a4a4a; line-height: 1.6; }
+.sms-form-status:empty { display: none; }
+.sms-form-status[data-error='true'] { color: #a12424; }
+.sms-form-status[data-error='false'] { color: #206139; }
+.sms-download { display: inline-block; margin-top: 12px; text-decoration: underline; }
+.modal.show { opacity: 1; }
+.modal.show .modal-dialog { transform: translate(0, 0); }
+.sms-modal-backdrop { opacity: .5; }
+.tt-promo-02 .moving-car .carObj { background-size: 904px 456px !important; }
+.tt-layout-01.sms-ready { margin: 0; padding: 80px 0; text-align: left; font-size: 16px; line-height: 1.7; }
+.tt-layout-01.sms-ready .container > .row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; gap: 56px; margin: 0; }
+.tt-layout-01.sms-ready .container > .row::before,
+.tt-layout-01.sms-ready .container > .row::after { display: none; }
+.tt-layout-01.sms-ready .container > .row > .col-md-6 { width: auto; min-width: 0; float: none !important; padding: 0; }
+.tt-layout-01.sms-ready .container > .row > .col-md-6:first-child { display: block; }
+.tt-layout-01.sms-ready .tt-img { position: static; min-height: 0; }
+.tt-layout-01.sms-ready .tt-img img { display: block; position: static; width: 100%; max-width: 100%; height: auto; margin: 0; }
+.tt-layout-01.sms-ready .tt-img-mobile,
+.tt-layout-01.sms-ready .tt-img-device { display: none; }
+.tt-layout-01.sms-ready .tt-title-lg { font-size: clamp(32px, 3.2vw, 52px); line-height: 1.15; text-align: left; padding-bottom: 22px; }
+.tt-layout-01.sms-ready .list-icon { max-width: none; text-align: left; margin-top: 24px; }
+.tt-layout-01.sms-ready .row-btn { text-align: left; }
+.tt-layout-01.sms-ready .tt-btn-custom { margin-top: 26px; }
+@media (max-width: 991px) {
+  .tt-layout-01.sms-ready { padding: 56px 0; }
+  .tt-layout-01.sms-ready .container > .row { grid-template-columns: minmax(0, 1fr); gap: 32px; }
+  .tt-layout-01.sms-ready .tt-img { max-width: 620px; margin-inline: auto; }
+}
+@media (max-width: 550px) {
+  .tt-layout-01.sms-ready { padding: 40px 0; }
+  .tt-layout-01.sms-ready .container > .row { gap: 26px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto !important; }
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
+
+/* Match the footer brand to the navigation logo. */
+#tt-footer .widget_media_image a { display: inline-block; }
+#tt-footer .widget_media_image img { display: block; width: 160px; height: 118px !important; object-fit: contain; }
+
+.sms-rate-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; margin-top: 36px; }
+.sms-rate-grid .tt-promo-table { display: flex; flex-direction: column; margin: 0; height: 100%; }
+.sms-rate-grid .tt-promo-table h6 { min-height: 100px; display: flex; align-items: center; justify-content: center; padding: 20px 12px; }
+.sms-rate-grid .tt-promo-table p { padding: 24px 16px 0; flex: 1; }
+.sms-rate-grid .tt-promo-table .price { padding: 24px 12px; }
+.sms-rate-grid .tt-promo-table .price span { white-space: nowrap; }
+@media (max-width: 991px) { .sms-rate-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 575px) { .sms-rate-grid { grid-template-columns: minmax(0, 1fr); } }
+
+.sms-programs-intro { margin: 20px auto 32px; line-height: 1.8; }
+.sms-program-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; }
+.sms-program-grid .tt-box-subjects { display: flex; flex-direction: column; min-width: 0; }
+.sms-program-grid .tt-box-subjects .img img { width: 100%; height: 180px; object-fit: cover; }
+.sms-program-grid .tt-box-subjects .description { display: flex; flex-direction: column; flex: 1; padding: 28px 18px; }
+.sms-program-grid .description h6 { min-height: 58px; }
+.sms-program-grid .description p { margin: 12px 0; }
+.sms-program-grid .description .sms-program-price { margin-top: auto; padding-top: 18px; font-size: 26px; font-weight: 700; color: #121113; }
+.sms-programs-reviews { margin-top: 30px; }
+.sms-programs-reviews a { text-decoration: underline; text-underline-offset: 4px; }
+@media (max-width: 1199px) { .sms-program-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 575px) { .sms-program-grid { grid-template-columns: minmax(0, 1fr); } }
+
+#our-programs, #our-programs .sunset-card { scroll-margin-top: 110px; }
+
+/* SMS About page photographs. */
+img[src^="/dricub-assets/about/"] { display:block; max-width:100%; height:auto; border-radius:14px; }
+.box-step img[src^="/dricub-assets/about/"] { width:min(100%,720px); margin:30px auto 0; }
+.sms-about-gallery { padding:75px 0; font-family:Lexend,sans-serif; }
+.sms-about-photo-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:28px; margin-top:35px; }
+.sms-about-photo-grid figure { margin:0; overflow:hidden; border:1px solid #e2e6e7; border-radius:16px; background:#fff; }
+.sms-about-photo-grid img { width:100%; aspect-ratio:4/3; object-fit:cover; border-radius:0; }
+.sms-about-photo-grid figcaption { padding:24px; }
+.sms-about-photo-grid h3 { font-size:22px; margin:0 0 12px; }
+.sms-about-photo-grid a { color:#ad2638; text-decoration:underline; text-underline-offset:4px; }
+.sms-about-photo-credits { margin-top:22px; font-size:12px; color:#58666b; }
+.sms-about-photo-credits a { color:inherit; text-decoration:underline; }
+@media(max-width:767px) { .sms-about-photo-grid { grid-template-columns:minmax(0,1fr); } .sms-about-gallery { padding:50px 0; } }
+
+/* Shared SMS logo loading screen. Existing page-load timing is preserved. */
+.sms-logo-loader { display: flex; align-items: center; justify-content: center; background: #fff; }
+.sms-loader-brand { width: 240px; text-align: center; }
+.sms-loader-brand img { display: block; width: 180px; height: 133px; object-fit: contain; margin: 0 auto 22px; animation: sms-logo-breathe 1.6s ease-in-out infinite; }
+.sms-loader-brand p { margin: 18px 0 0; color: #172126; font: 500 13px/1.5 Lexend,sans-serif; }
+.sms-loader-track { position: relative; height: 3px; width: 120px; margin: auto; overflow: hidden; background: #f0dfe2; border-radius: 4px; }
+.sms-loader-track::after { content: ''; position: absolute; inset: 0; background: #b31c2e; transform: translateX(-100%); animation: sms-logo-track 1.3s ease-in-out infinite; }
+@keyframes sms-logo-breathe { 0%,100% { opacity: .65; transform: scale(.97); } 50% { opacity: 1; transform: scale(1); } }
+@keyframes sms-logo-track { to { transform: translateX(100%); } }
+@media(prefers-reduced-motion:reduce) { .sms-loader-brand img,.sms-loader-track::after { animation: none; opacity: 1; transform: none; } }

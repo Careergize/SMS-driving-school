@@ -1,4 +1,4 @@
-export const backendOrigin = new URL(process.env.SMS_BACKEND_URL || 'http://127.0.0.1:8000').origin
+export const backendOrigin = new URL(process.env.SMS_BACKEND_URL || 'http://127.0.0.1:8011').origin
 
 export class BackendError extends Error {
   constructor(status, details) {
