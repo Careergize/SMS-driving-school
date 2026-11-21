@@ -40,7 +40,7 @@ The upstream Host header matches the Node server's local host check. Serve the f
 
 ## Live Google reviews
 
-The contact column includes a Google review panel with a branch selector. It requests fresh reviews from `/api/google-reviews/` as the panel approaches the viewport. Google Places API (New) returns up to five reviews sorted by relevance, rather than the complete review history. Author attribution, source links, rating totals and translations are retained. Review content is not saved or cached by the application.
+The homepage includes a testimonial slider above the training banner. It loads the Vanchiyoor listing automatically without a branch selector. It requests fresh reviews from `/api/google-reviews/` as the panel approaches the viewport. Google Places API (New) returns up to five reviews sorted by relevance, rather than the complete review history. Author attribution, source links, rating totals and translations are retained. Review content is not saved or cached by the application.
 
 To enable live data, put a server-restricted Google Places API (New) key and each branch's verified Place ID in the ignored `.env.local`, using the `GOOGLE_PLACES_API_KEY` and `GOOGLE_PLACE_ID_*` names in `.env.example`. Enable Places API (New) and billing in the associated Google Cloud project. Keep the key server-side; never use a `VITE_` prefix. Verify each Place ID belongs to the correct SMS branch using Google's Place ID finder. Restart the Node server after changing configuration. Missing branch configuration or a Google error displays a direct Google reviews link without invented testimonials or ratings.
 

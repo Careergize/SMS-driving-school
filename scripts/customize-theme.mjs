@@ -3,6 +3,7 @@ import { resolve } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { updateBlog } from './update-blog.mjs'
 import { updateAbout } from './update-about.mjs'
+import { updateTestimonials } from './update-testimonials.mjs'
 
 const root = resolve(import.meta.dirname, '..')
 const palette = {
@@ -55,5 +56,6 @@ export async function customizeTheme() {
   await writeFile(homePath, home)
   await updateBlog()
   await updateAbout()
+  await updateTestimonials()
 }
 if (import.meta.url === pathToFileURL(process.argv[1]).href) await customizeTheme()
