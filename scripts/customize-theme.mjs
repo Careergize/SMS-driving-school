@@ -1,6 +1,7 @@
 import { readdir, readFile, writeFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import { pathToFileURL } from 'node:url'
+import { updateBlog } from './update-blog.mjs'
 
 const root = resolve(import.meta.dirname, '..')
 const palette = {
@@ -23,6 +24,8 @@ async function recolor(directory) {
         .replace(/(?:id="pass-test"\s+)*class="tt-promo-02 road"/g, 'id="pass-test" class="tt-promo-02 road"')
         .replace(/<div class="tt-header-wrapper-top">[\s\S]*?<!-- end of top header-->/g, '')
         .replace(/<div class="tt-header-top-toggle">[\s\S]*?<\/div>/g, '')
+        .replace(/(<div class="tt-footer-copyright">)([\s\S]*?)(<\/div>)/g, (_, start, content, end) => start + content.trim().replace(/\s*·?\s*Powered by Careergize LLP\.?/gi, '') + ' · Powered by Careergize LLP' + end)
+        .replace(/(<footer\b[\s\S]*?<\/footer>)/g, footer => footer.includes('100054573483960') ? footer : footer.replace(/(<ul class="tt-social-icon">)/, '$1<li><a href="https://www.facebook.com/p/SMS-Driving-school-Trivandrum-100054573483960/" target="_blank" rel="noopener noreferrer" aria-label="SMS Motor Driving School on Facebook" title="Facebook"><i class="icon-facebook-logo" aria-hidden="true"></i></a></li>'))
         .replace(/(<header id="tt-header">[\s\S]*?<\/header>)/g, header => header.replaceAll('/dricub-assets/sms-logo.svg', '/dricub-assets/sms-navbar-logo-transparent.png').replaceAll('/dricub-assets/sms-navbar-logo.jpg', '/dricub-assets/sms-navbar-logo-transparent.png'))
       if (before !== after) await writeFile(file, after)
     }
@@ -49,5 +52,6 @@ export async function customizeTheme() {
   if (!home.includes('href="/dricub-assets/hero/hero.css"')) home = home.replace('</head>', '<link rel="stylesheet" href="/dricub-assets/hero/hero.css"></head>')
   if (!home.includes('src="/dricub-assets/hero/hero.js"')) home = home.replace('</body>', '<script src="/dricub-assets/hero/hero.js" defer></script></body>')
   await writeFile(homePath, home)
+  await updateBlog()
 }
 if (import.meta.url === pathToFileURL(process.argv[1]).href) await customizeTheme()
