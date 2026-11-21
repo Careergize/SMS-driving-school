@@ -26,9 +26,9 @@ button { cursor: pointer; }
 .nav-item > a { padding-block: 12px; }
 .nav-item > a:hover, .nav-item > a[href="#home"] { color: #bd1830; }
 .nav-chevron { padding: 6px 0 6px 2px; }
-.dropdown { position: absolute; top: 100%; left: -12px; display: grid; min-width: 235px; padding: 8px; background: white; border-top: 3px solid #bd1830; box-shadow: 0 10px 35px #14141829; }
-.dropdown button { padding: 10px 9px; text-align: left; white-space: normal; }
-.dropdown button:hover { color: #bd1830; background: #fff2f3; }
+.nav .dropdown { position: absolute; top: 100%; left: -12px; display: grid; min-width: 235px; padding: 8px; background: white; border-top: 3px solid #bd1830; box-shadow: 0 10px 35px #14141829; }
+.nav .dropdown button { padding: 10px 9px; text-align: left; white-space: normal; }
+.nav .dropdown button:hover { color: #bd1830; background: #fff2f3; }
 .menu-toggle { display: none; }
 .button { display: inline-flex; justify-content: center; align-items: center; gap: 10px; background: #bd1830; border: 1px solid #bd1830; color: #fff; padding: 14px 20px; border-radius: 5px; font-weight: 750; font-size: .89rem; line-height: 1.3; transition: background .2s, border .2s; }
 .button:hover { background: #991225; border-color: #991225; }
@@ -198,7 +198,7 @@ dialog::backdrop { background: #15131bc2; }
   .hero-copy, .has-entered:nth-child(2) { animation-delay: .06s; }
   .carousel, .has-entered:nth-child(3) { animation-delay: .12s; }
   .has-entered:nth-child(4) { animation-delay: .18s; }
-  .topbar, .navrow, .dropdown, dialog[open], dialog[open]::backdrop {
+  .topbar, .navrow, .nav .dropdown, dialog[open], dialog[open]::backdrop {
     animation: page-fade .3s ease-out;
   }
   .button svg, .text-link svg, .hero-link svg { transition: translate .2s ease; }
@@ -222,7 +222,7 @@ dialog::backdrop { background: #15131bc2; }
   .nav.open { display: grid; gap: 0; }
   .nav-item { display: flex; flex-wrap: wrap; justify-content: space-between; border-bottom: 1px solid #eee8e9; }
   .nav-chevron { padding: 9px; }
-  .dropdown { position: static; width: 100%; box-shadow: none; }
+  .nav .dropdown { position: static; width: 100%; box-shadow: none; }
 }
 @media (max-width: 640px) {
   .wrap { width: calc(100% - 32px); }

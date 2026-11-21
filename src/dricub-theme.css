@@ -20,8 +20,8 @@
 .nav-item > a { padding-block: 20px; }
 .nav-item > a:hover, .nav-item > a[href='#home'] { color: #896200; }
 .nav-item > a:hover { box-shadow: inset 0 -3px var(--school-yellow); }
-.dropdown { border-top-color: var(--school-yellow); text-transform: none; }
-.dropdown button:hover { background: #fff9df; color: var(--school-ink); }
+.nav .dropdown { border-top-color: var(--school-yellow); text-transform: none; }
+.nav .dropdown button:hover { background: #fff9df; color: var(--school-ink); }
 .button { background: var(--school-yellow); color: #292929; border-color: var(--school-yellow); border-radius: 4px; padding: 16px 26px; font-size: .875rem; font-weight: 800; text-transform: uppercase; }
 .button:hover { background: var(--school-yellow-hover); border-color: var(--school-yellow-hover); }
 .button.secondary { color: var(--school-ink); border-color: #ccc; background: transparent; }

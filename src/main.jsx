@@ -221,6 +221,21 @@ function App({ showBlog, showAbout, showRegistration }) {
     setDropdown('')
   }
 
+  if (showRegistration) return <main id="main" className="registration-app"><section className="section contact registration-page">
+        <div className="wrap grid gap-9 lg:grid-cols-[1fr_1.25fr]">
+          <div>
+            <h1>Student registration</h1>
+            <p>You must be at least 18 years old to register. Choose a driving course and share your contact details. Our staff will contact you to confirm your enrolment.</p>
+            <a href="/login">Back to sign in</a>
+            <div className="registration-quick-links">
+              <h2>Quick links</h2>
+              <a className="button" href="https://parivahan.gov.in/en/content/license-registration-details-page" target="_blank" rel="noopener noreferrer">Parivahan Registration</a>
+            </div>
+          </div>
+          <EnquiryForm selected={selected} setSelected={setSelected} offerings={courses} registration/>
+        </div>
+      </section></main>
+
   return <>
     <a className="skip" href="#main">Skip to content</a>
     <header id="home">
