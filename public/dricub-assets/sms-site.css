@@ -114,3 +114,19 @@ img[src^="/dricub-assets/about/"] { display:block; max-width:100%; height:auto; 
 @keyframes sms-logo-breathe { 0%,100% { opacity: .65; transform: scale(.97); } 50% { opacity: 1; transform: scale(1); } }
 @keyframes sms-logo-track { to { transform: translateX(100%); } }
 @media(prefers-reduced-motion:reduce) { .sms-loader-brand img,.sms-loader-track::after { animation: none; opacity: 1; transform: none; } }
+/* Keep navigation usable on phones and tablets, including after sticky-header moves. */
+@media (max-width: 991px) {
+  #tt-header .tt-toggle-menu { display: block; touch-action: manipulation; min-width: 44px; min-height: 44px; color: #fff; }
+  #tt-header .tt-toggle-menu.active { color: #fff; }
+  #tt-header .tt-toggle-menu:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+  #tt-header .col-menu { width: 100%; float: none; }
+  #tt-header .tt-menu { display: none; height: 0 !important; margin: 0; padding: 0; overflow: hidden; clear: both; }
+  #tt-header .tt-menu.open-menu { display: block; height: auto !important; max-height: calc(100dvh - 130px); overflow-y: auto !important; overscroll-behavior: contain; padding: 8px 0 18px; }
+  #tt-header .tt-menu::before { display: none; }
+  #tt-header .tt-menu > ul { display: block; width: 100%; margin: 0; padding: 0; }
+  #tt-header .tt-menu ul li { display: block; float: none; width: 100%; border-bottom: 1px solid #ffffff25; }
+  #tt-header .tt-menu ul li a { display: block; padding: 14px 20px; font-size: 16px; line-height: 1.4; white-space: normal; }
+  #tt-header .tt-menu ul ul.sub-menu { display: block !important; position: static; width: 100%; min-width: 0; opacity: 1; visibility: visible; transform: none; margin: 0; padding: 0 0 8px 16px; box-shadow: none; border: 0; }
+  #tt-header .tt-menu .tt-icon-subMenu, #tt-header .tt-menu .arrow { display: none !important; }
+  #tt-header .tt-menu-stuck-row .tt-toggle-menu { display: block; }
+}

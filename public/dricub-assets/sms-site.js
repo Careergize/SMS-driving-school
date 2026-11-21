@@ -1,5 +1,50 @@
 /* Keep the original theme widgets; submit the demo's forms to the SMS backend. */
 (() => {
+  // Own mobile navigation independently of the legacy theme's widget setup.
+  const header = document.getElementById('tt-header')
+  const menu = header?.querySelector('.tt-menu')
+  const toggle = header?.querySelector('.tt-toggle-menu')
+  if (menu && toggle) {
+    const mobile = window.matchMedia('(max-width: 991px)')
+    menu.id ||= 'sms-main-navigation'
+    toggle.setAttribute('role', 'button')
+    toggle.setAttribute('tabindex', '0')
+    toggle.setAttribute('aria-controls', menu.id)
+    const setOpen = open => {
+      menu.classList.toggle('open-menu', open)
+      toggle.classList.toggle('active', open)
+      document.body.classList.toggle('open-menu', open)
+      toggle.setAttribute('aria-expanded', String(open))
+      toggle.setAttribute('aria-label', open ? 'Close navigation menu' : 'Open navigation menu')
+      menu.removeAttribute('style')
+    }
+    setOpen(false)
+    document.addEventListener('click', event => {
+      if (!mobile.matches) return
+      if (toggle.contains(event.target)) {
+        event.preventDefault()
+        event.stopImmediatePropagation()
+        setOpen(!menu.classList.contains('open-menu'))
+      } else if (menu.contains(event.target) && event.target.closest('a[href]')) {
+        setOpen(false)
+      } else if (!header.contains(event.target)) {
+        setOpen(false)
+      }
+    }, true)
+    toggle.addEventListener('keydown', event => {
+      if (mobile.matches && (event.key === 'Enter' || event.key === ' ')) {
+        event.preventDefault()
+        setOpen(!menu.classList.contains('open-menu'))
+      }
+    })
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && menu.classList.contains('open-menu')) {
+        setOpen(false)
+        toggle.focus()
+      }
+    })
+    mobile.addEventListener('change', () => setOpen(false))
+  }
   let activeModal = null
   let modalTrigger = null
   const closeModal = () => {
