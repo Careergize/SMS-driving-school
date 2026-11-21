@@ -26,6 +26,7 @@ async function recolor(directory) {
         .replace(/(?:id="pass-test"\s+)*class="tt-promo-02 road"/g, 'id="pass-test" class="tt-promo-02 road"')
         .replace(/<div class="tt-header-wrapper-top">[\s\S]*?<!-- end of top header-->/g, '')
         .replace(/<div class="tt-header-top-toggle">[\s\S]*?<\/div>/g, '')
+        .replace(/<header\b[\s\S]*?<\/header>/g, header => header.replace(/ORDER NOW|Enroll Now/gi, 'Quick Enquiry'))
         .replace(/(<div class="tt-footer-copyright">)([\s\S]*?)(<\/div>)/g, (_, start, content, end) => start + content.trim().replace(/\s*·?\s*Powered by Careergize LLP\.?/gi, '') + ' · Powered by Careergize LLP' + end)
         .replace(/(<footer\b[\s\S]*?<\/footer>)/g, footer => footer.includes('100054573483960') ? footer : footer.replace(/(<ul class="tt-social-icon">)/, '$1<li><a href="https://www.facebook.com/p/SMS-Driving-school-Trivandrum-100054573483960/" target="_blank" rel="noopener noreferrer" aria-label="SMS Motor Driving School on Facebook" title="Facebook"><i class="icon-facebook-logo" aria-hidden="true"></i></a></li>'))
         .replace(/(<header id="tt-header">[\s\S]*?<\/header>)/g, header => header.replaceAll('/dricub-assets/sms-logo.svg', '/dricub-assets/sms-navbar-logo-transparent.png').replaceAll('/dricub-assets/sms-navbar-logo.jpg', '/dricub-assets/sms-navbar-logo-transparent.png'))
