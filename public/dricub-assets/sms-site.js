@@ -10,6 +10,20 @@
     toggle.setAttribute('role', 'button')
     toggle.setAttribute('tabindex', '0')
     toggle.setAttribute('aria-controls', menu.id)
+    const dropdowns = [...menu.querySelectorAll('li')].map(item => {
+      const submenu = item.querySelector(':scope > ul')
+      const link = item.querySelector(':scope > a')
+      if (!submenu || !link) return null
+      submenu.id ||= `sms-submenu-${menu.querySelectorAll('ul').length}-${[...menu.querySelectorAll('li')].indexOf(item)}`
+      link.setAttribute('aria-controls', submenu.id)
+      return { item, submenu, link }
+    }).filter(Boolean)
+    const setDropdown = (dropdown, open) => {
+      dropdown.item.classList.toggle('sms-dropdown-open', open)
+      dropdown.link.setAttribute('aria-expanded', String(open))
+      dropdown.submenu.removeAttribute('style')
+    }
+    dropdowns.forEach(dropdown => setDropdown(dropdown, false))
     const setOpen = open => {
       menu.classList.toggle('open-menu', open)
       toggle.classList.toggle('active', open)
@@ -17,6 +31,7 @@
       toggle.setAttribute('aria-expanded', String(open))
       toggle.setAttribute('aria-label', open ? 'Close navigation menu' : 'Open navigation menu')
       menu.removeAttribute('style')
+      if (!open) dropdowns.forEach(dropdown => setDropdown(dropdown, false))
     }
     setOpen(false)
     document.addEventListener('click', event => {
@@ -26,7 +41,15 @@
         event.stopImmediatePropagation()
         setOpen(!menu.classList.contains('open-menu'))
       } else if (menu.contains(event.target) && event.target.closest('a[href]')) {
-        setOpen(false)
+        const dropdown = dropdowns.find(({ link }) => link.contains(event.target))
+        if (dropdown) {
+          event.preventDefault()
+          event.stopImmediatePropagation()
+          const open = !dropdown.item.classList.contains('sms-dropdown-open')
+          dropdowns.forEach(item => setDropdown(item, item === dropdown && open))
+        } else {
+          setOpen(false)
+        }
       } else if (!header.contains(event.target)) {
         setOpen(false)
       }

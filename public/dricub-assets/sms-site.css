@@ -126,7 +126,13 @@ img[src^="/dricub-assets/about/"] { display:block; max-width:100%; height:auto; 
   #tt-header .tt-menu > ul { display: block; width: 100%; margin: 0; padding: 0; }
   #tt-header .tt-menu ul li { display: block; float: none; width: 100%; border-bottom: 1px solid #ffffff25; }
   #tt-header .tt-menu ul li a { display: block; padding: 14px 20px; font-size: 16px; line-height: 1.4; white-space: normal; }
-  #tt-header .tt-menu ul ul.sub-menu { display: block !important; position: static; width: 100%; min-width: 0; opacity: 1; visibility: visible; transform: none; margin: 0; padding: 0 0 8px 16px; box-shadow: none; border: 0; }
+  #tt-header .tt-menu ul ul.sub-menu { display: none !important; position: static; width: 100%; min-width: 0; opacity: 1; visibility: visible; transform: none; margin: 0; padding: 0 12px 8px; box-shadow: none; border: 0; background: #182433; }
+  #tt-header .tt-menu ul li.sms-dropdown-open > ul.sub-menu { display: block !important; }
+  #tt-header .tt-menu ul ul.sub-menu a { background: #182433; color: #fff; padding: 15px 18px; font-size: 15px; line-height: 1.5; text-shadow: none; }
+  #tt-header .tt-menu ul ul.sub-menu a:hover, #tt-header .tt-menu ul ul.sub-menu a:focus-visible { background: #304358; color: #fff; }
+  #tt-header .tt-menu a[aria-controls] { position: relative; padding-right: 50px; }
+  #tt-header .tt-menu a[aria-controls]::after { content: ''; position: absolute; right: 23px; top: 20px; width: 9px; height: 9px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg); }
+  #tt-header .tt-menu a[aria-expanded="true"]::after { transform: rotate(225deg); top: 24px; }
   #tt-header .tt-menu .tt-icon-subMenu, #tt-header .tt-menu .arrow { display: none !important; }
   #tt-header .tt-menu-stuck-row .tt-toggle-menu { display: block; }
 }
