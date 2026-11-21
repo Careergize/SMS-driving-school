@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
-import { ArrowLeft, ArrowRight, ArrowUp, BookOpen, CarFront, Check, ChevronDown, Clock, GraduationCap, IdCard, Mail, MapPin, Menu, MessageCircle, Phone, Plus, Route, ShieldCheck, X } from 'lucide-react'
+import { ArrowLeft, ArrowRight, ArrowUp, BookOpen, CarFront, Check, ChevronDown, Clock, Facebook, GraduationCap, IdCard, Mail, MapPin, Menu, MessageCircle, Phone, Plus, Route, ShieldCheck, X } from 'lucide-react'
 import { courses, extras, faqs, fees, school, services } from './content'
 import './styles.css'
 import './dricub-theme.css'
@@ -380,9 +380,10 @@ function App({ showBlog, showAbout, showRegistration }) {
       <address className="footer-contact">
         <a href={'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(footerAddress)}><MapPin size={17} aria-hidden="true"/>{footerAddress}</a>
         <a href="tel:+919745824345"><Phone size={17} aria-hidden="true"/>9745824345</a>
+        <a href="https://www.facebook.com/p/SMS-Driving-school-Trivandrum-100054573483960/" target="_blank" rel="noopener noreferrer"><Facebook size={17} aria-hidden="true"/>Follow us on Facebook</a>
       </address>
       <a className="back-top" href={pageLink('home')} aria-label="Back to top"><ArrowUp size={21}/></a>
-    </div><div className="wrap copyright">© {new Date().getFullYear()} SMS Motor Driving School</div></footer>
+    </div><div className="wrap copyright">© {new Date().getFullYear()} SMS Motor Driving School · Powered by Careergize LLP</div></footer>
 
     <a className="whatsapp-enquiry" href={whatsappEnquiryUrl} target="_blank" rel="noopener noreferrer" aria-label="Enquire on WhatsApp">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">

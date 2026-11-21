@@ -19,7 +19,7 @@ function page(title, content, isDashboard = false, isLogin = false) {
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>${title} | SMS Motor Driving School</title>
-  <link rel="icon" href="/sms-logo.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/dricub-assets/sms-favicon-32.png?v=2">
   <style>
     * { box-sizing: border-box; }
     body { margin: 0; background: #f8f5f5; color: #18181e; font: 1rem/1.55 Arial, sans-serif; }
