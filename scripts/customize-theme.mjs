@@ -2,6 +2,7 @@ import { readdir, readFile, writeFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { updateBlog } from './update-blog.mjs'
+import { updateAbout } from './update-about.mjs'
 
 const root = resolve(import.meta.dirname, '..')
 const palette = {
@@ -53,5 +54,6 @@ export async function customizeTheme() {
   if (!home.includes('src="/dricub-assets/hero/hero.js"')) home = home.replace('</body>', '<script src="/dricub-assets/hero/hero.js" defer></script></body>')
   await writeFile(homePath, home)
   await updateBlog()
+  await updateAbout()
 }
 if (import.meta.url === pathToFileURL(process.argv[1]).href) await customizeTheme()
