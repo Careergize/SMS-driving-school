@@ -29,6 +29,8 @@ const shortMonth = new Intl.DateTimeFormat('en-IN', { month: 'short', timeZone: 
 const displayDate = value => dateLabel.format(new Date(value))
 
 function renderStudents(branches, selected, filters, students) {
+  const search = (filters.get('student-search') || '').trim()
+  students = students.filter(student => !search || String(student.name || '').toLocaleLowerCase().includes(search.toLocaleLowerCase()))
   const paymentFilter = filters.get('payment')
   const list = escapeHtml(studentListUrl(filters))
   const activePayment = ['paid', 'unpaid'].includes(paymentFilter) ? paymentFilter : ''
@@ -52,13 +54,16 @@ function renderStudents(branches, selected, filters, students) {
     <form class="crm-filters" method="get" action="/dashboard">
       <input type="hidden" name="tab" value="students">
       ${activePayment ? `<input type="hidden" name="payment" value="${activePayment}">` : ''}
-      <div>${branchSelect(branches, selected)}</div><button type="submit">Apply filters</button>
+      <div>${branchSelect(branches, selected)}</div>
+      <div><label for="student-name-search">Student name</label><input id="student-name-search" name="student-search" type="search" value="${escapeHtml(search)}" placeholder="Search by student name"></div>
+      <button type="submit">Apply filters</button>
+      ${search ? `<a href="${escapeHtml(studentListUrl(new URLSearchParams([...filters].filter(([key]) => key !== 'student-search'))))}">Clear search</a>` : ''}
     </form>
     <div class="crm-section-title"><h2>Student directory</h2><span>${count(rows.length)} students</span>
       <a class="student-action" href="${list}&amp;action=add">Add student</a></div>
     <nav class="crm-summary-cards" aria-label="Filter students by payment">
       ${paymentTabs.map(([payment, label, total, code]) => `<a class="crm-card crm-kpi crm-summary-card"
-        href="/dashboard?tab=students${selected ? `&amp;branch=${selected.id}` : ''}${payment ? `&amp;payment=${payment}` : ''}"${payment === activePayment ? ' aria-current="true"' : ''}>
+        href="/dashboard?tab=students${selected ? `&amp;branch=${selected.id}` : ''}${payment ? `&amp;payment=${payment}` : ''}${search ? `&amp;student-search=${escapeHtml(encodeURIComponent(search))}` : ''}"${payment === activePayment ? ' aria-current="true"' : ''}>
         <div><span>${label}</span><i class="attendance-${payment === 'paid' ? 'present' : payment === 'unpaid' ? 'absent' : 'scheduled'}" aria-hidden="true">${code}</i></div>
         <strong>${count(total)}</strong>
       </a>`).join('')}

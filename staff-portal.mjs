@@ -172,7 +172,8 @@ export async function handlePortal(pathname, request, response) {
   const reportId = pathname.match(/^\/assistant-reports\/([a-f0-9]{32})\/$/)?.[1]
   const licenceDocument = pathname.match(/^\/licence-documents\/([1-9]\d{0,17})\/(ll|dl|supporting|student)$/)
   const licenceExport = pathname.match(/^\/licence-export\.(xlsx|pdf)$/)
-  if (!billId && !reportId && !licenceDocument && !licenceExport && !['/login', '/student-login', '/dashboard', '/logout'].includes(pathname)) return false
+  const feeProofId = pathname.match(/^\/fee-proofs\/([1-9]\d{0,17})$/)?.[1]
+  if (!billId && !reportId && !licenceDocument && !licenceExport && !feeProofId && !['/login', '/student-login', '/dashboard', '/logout'].includes(pathname)) return false
   response.setHeader('Cache-Control', 'no-store')
 
   if (pathname === '/student-login') {
@@ -188,6 +189,7 @@ export async function handlePortal(pathname, request, response) {
     const studentQuery = new URL(request.url, 'http://localhost').searchParams
     const showStudentPortal = async (profileError = '', saved = false) => {
       const { lessons, lesson_history: history = [], summary, attendance, instructors, licence, ...profile } = await backendApi(portalPath, { token: studentSession })
+      summary.proof_message = { saved: 'Payment screenshot submitted. Awaiting staff verification; your balance has not changed.', invalid: 'Enter the amount paid and choose a PNG or JPEG screenshot up to 5 MB.', failed: 'Screenshot could not be uploaded. Please try again.' }[studentQuery.get('proof')] || ''
       const uploadMessage = { saved: 'Document uploaded.', invalid: 'Choose a PDF, PNG or JPEG file up to 5 MB.', failed: 'Upload failed. Try again.' }[studentQuery.get('upload')] ?? ''
       sendPage(response, status, page('Student Dashboard', renderStudentLessons(profile, { upcoming: lessons, history }, summary, profileError, saved, attendance, instructors, licence, uploadMessage), true))
     }
@@ -222,7 +224,8 @@ export async function handlePortal(pathname, request, response) {
         return true
       }
       const licenceUpload = studentQuery.get('action') === 'licence-upload'
-      if (licenceUpload && !studentSession) {
+      const feeUpload = studentQuery.get('action') === 'fee-proof'
+      if ((licenceUpload || feeUpload) && !studentSession) {
         redirect(response, '/student-login')
         return true
       }
@@ -230,18 +233,19 @@ export async function handlePortal(pathname, request, response) {
       let bytes = 0
       for await (const chunk of request) {
         bytes += chunk.length
-        if (bytes > (licenceUpload ? 5 * 1024 * 1024 + 8192 : 4096)) {
-          if (licenceUpload) redirect(response, '/student-login?upload=invalid#student-licence')
+        if (bytes > (licenceUpload || feeUpload ? 5 * 1024 * 1024 + 8192 : 4096)) {
+          if (feeUpload) redirect(response, '/student-login?proof=invalid#student-fees')
+          else if (licenceUpload) redirect(response, '/student-login?upload=invalid#student-licence')
           else response.writeHead(413).end()
           return true
         }
         chunks.push(chunk)
       }
-      if (licenceUpload) {
+      if (licenceUpload || feeUpload) {
         let result = 'saved'
         try {
           const data = await new Response(Buffer.concat(chunks), { headers: { 'Content-Type': request.headers['content-type'] } }).formData()
-          await backendApi(portalPath, { token: studentSession, method: 'POST', data })
+          await backendApi(portalPath + (feeUpload ? '?action=fee-proof' : ''), { token: studentSession, method: 'POST', data })
         } catch (failure) {
           if (failure.status === 401) {
             redirect(response, '/student-login', studentCookie('', 0))
@@ -249,7 +253,7 @@ export async function handlePortal(pathname, request, response) {
           }
           result = failure.status === 400 || failure instanceof TypeError ? 'invalid' : 'failed'
         }
-        redirect(response, `/student-login?upload=${result}#student-licence`)
+        redirect(response, feeUpload ? `/student-login?proof=${result}#student-fees` : `/student-login?upload=${result}#student-licence`)
         return true
       }
       const fields = new URLSearchParams(Buffer.concat(chunks).toString('utf8'))
@@ -329,12 +333,12 @@ export async function handlePortal(pathname, request, response) {
   }
   const token = request.headers.cookie?.match(/(?:^|;\s*)sms_staff=([a-f0-9]{64})(?:;|$)/)?.[1]
   const session = sessions.get(token)
-  if (licenceDocument || licenceExport) {
+  if (licenceDocument || licenceExport || feeProofId) {
     if (request.method !== 'GET') response.writeHead(405, { Allow: 'GET' }).end()
     else if (!session) redirect(response, '/login')
     else {
       const query = new URL(request.url, 'http://localhost').searchParams
-      const path = licenceDocument ? `/api/students/licences/${licenceDocument[1]}/documents/${licenceDocument[2]}/`
+      const path = feeProofId ? `/api/students/fee-proofs/${feeProofId}/` : licenceDocument ? `/api/students/licences/${licenceDocument[1]}/documents/${licenceDocument[2]}/`
         : `/api/students/licences/export.${licenceExport[1]}?${query}`
       try {
         await sendLicenceDownload(response, path, session.apiToken)

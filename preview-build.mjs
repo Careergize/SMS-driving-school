@@ -31,15 +31,15 @@ const server = createServer(async (request, response) => {
   if (await handlePortal(pathname, request, response)) return
   if (await handleThemeSite(request, response)) return
   const isPublicPage = ['/', '/about', '/about/', '/blog', '/blog/', '/blog/instagram', '/blog/instagram/', '/register', '/register/'].includes(pathname)
-  const file = isPublicPage ? '/index.html' : pathname
-  if (!/^\/(?:assets\/|learner-signs\/)?[\w.-]+$/.test(file) || !contentTypes[extname(file)]) {
+  const file = isPublicPage ? (pathname === '/' ? '/index.html' : pathname.replace(/\/$/, '') + '/index.html') : pathname
+  if ((!isPublicPage && !/^\/(?:assets\/|learner-signs\/)?[\w.-]+$/.test(file)) || !contentTypes[extname(file)]) {
     response.writeHead(404).end()
     return
   }
 
   try {
     let contents = await readFile(new URL(`./dist${file}`, import.meta.url))
-    if (file === '/index.html') {
+    if (isPublicPage) {
       contents = contents.toString()
         .replace('</head>', '<meta name="sms-local-api" content="enabled"></head>')
         .replace('</body>', '<div style="padding:16px;text-align:center"><a href="/login">Staff sign in</a></div></body>')

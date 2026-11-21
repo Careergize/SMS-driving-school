@@ -1,5 +1,6 @@
 import { escapeHtml } from './backend-api.mjs'
 import { renderStudentLicence } from './crm-licences.mjs'
+import { renderStudentFees } from './crm-student-fees.mjs'
 
 const weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 const formatHour = hour => `${hour % 12 || 12}:00 ${hour < 12 ? 'AM' : 'PM'}`
@@ -131,6 +132,7 @@ export function renderStudentLessons(profile, { upcoming: lessons, history }, su
       <nav aria-label="Student dashboard">
         <a href="#student-overview">Dashboard</a>
         <a href="#student-attendance">Attendance</a>
+        <a href="#student-fees">Fee</a>
         <a href="#lessons">Driving Lessons</a>
         <a href="#learner-test">Learner’s Test</a>
         <a href="#student-instructors">Instructor Details</a>
@@ -170,6 +172,7 @@ export function renderStudentLessons(profile, { upcoming: lessons, history }, su
         </div>
       </section>
       ${renderStudentAttendance(summary.total, attendance, format)}
+      ${renderStudentFees(summary)}
       <section id="learner-test" class="student-learner-test" aria-labelledby="learner-test-title">
         <div class="crm-intro"><h1 id="learner-test-title">SMS Learner’s Licence Practice Test</h1></div>
         <div class="crm-card learner-test-card" data-learner-test>

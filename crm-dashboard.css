@@ -160,13 +160,14 @@
 .lesson-list li { display: grid; grid-template-columns: 48px minmax(0, 1fr) auto; align-items: center; gap: .42rem; padding: .45rem; border: 1px solid #e8ecf2; border-radius: .45rem; }
 .student-dashboard .crm-side { background: #08244e; }
 .student-dashboard .booking-card { margin-bottom: 1.5rem; }
-.student-dashboard :is(.student-lessons, .student-profile, .student-attendance, .student-instructors, .student-licence, .student-learner-test) { display: none; }
-.student-dashboard :is(.student-lessons, .student-profile, .student-attendance, .student-instructors, .student-licence, .student-learner-test):target,
+.student-dashboard :is(.student-lessons, .student-profile, .student-attendance, .student-instructors, .student-licence, .student-learner-test, .student-fees) { display: none; }
+.student-dashboard :is(.student-lessons, .student-profile, .student-attendance, .student-instructors, .student-licence, .student-learner-test, .student-fees):target,
 .student-dashboard .student-profile-error { display: block; }
-.student-dashboard:has(:is(.student-lessons, .student-profile, .student-attendance, .student-instructors, .student-licence, .student-learner-test):target, .student-profile-error) .student-overview { display: none; }
-.student-dashboard:not(:has(:is(.student-lessons, .student-profile, .student-attendance, .student-instructors, .student-licence, .student-learner-test):target, .student-profile-error)) nav a[href="#student-overview"],
+.student-dashboard:has(:is(.student-lessons, .student-profile, .student-attendance, .student-instructors, .student-licence, .student-learner-test, .student-fees):target, .student-profile-error) .student-overview { display: none; }
+.student-dashboard:not(:has(:is(.student-lessons, .student-profile, .student-attendance, .student-instructors, .student-licence, .student-learner-test, .student-fees):target, .student-profile-error)) nav a[href="#student-overview"],
 .student-dashboard:has(.student-lessons:target) nav a[href="#lessons"],
 .student-dashboard:has(.student-learner-test:target) nav a[href="#learner-test"],
+.student-dashboard:has(.student-fees:target) nav a[href="#student-fees"],
 .student-dashboard:has(.student-attendance:target) nav a[href="#student-attendance"],
 .student-dashboard:has(.student-instructors:target) nav a[href="#student-instructors"],
 .student-dashboard:has(.student-licence:target) nav a[href="#student-licence"],
@@ -366,3 +367,14 @@ a.crm-summary-card:hover, .crm-summary-card[aria-current="true"] { border-color:
 .assistant-compose > div { display: flex; gap: .6rem; }
 .assistant-compose input { min-width: 0; }
 .assistant-compose button { flex: 0 0 auto; }
+
+.student-fee-payment{margin:1.5rem 0;max-width:44rem}.student-fee-pay{display:inline-block;padding:.75rem 1.25rem;border-radius:.5rem;background:#a3152b;color:white;font-weight:700;text-decoration:none}.student-fee-payment p{line-height:1.6}
+
+.student-fee-dialog{width:min(96vw,34rem);max-height:90dvh;overflow:auto;border:0;border-radius:16px;padding:24px;color:#18181e;box-shadow:0 20px 80px #0004}.student-fee-dialog::backdrop{background:#111827b3}.student-fee-dialog-heading{display:flex;align-items:center;justify-content:space-between;gap:16px}.student-fee-dialog-heading h2{margin:0}.student-payment-qr{display:block;width:min(100%,300px);height:auto;margin:16px auto}.student-proof-form{display:grid;gap:10px;margin-top:24px}.student-proof-form input{width:100%;min-width:0}.student-proof-form p,.student-fee-dialog p{font-size:14px;line-height:1.6;overflow-wrap:anywhere}.student-fee-dialog:open{display:block}.student-fee-pay{cursor:pointer;border:0}.student-fee-dialog button{min-height:44px}.student-fee-dialog label{font-weight:600}
+
+/* Enlarge the actual QR within the supplied payment screenshot. */
+.student-fee-dialog{width:min(96vw,40rem)}
+.student-payment-qr-frame{position:relative;width:min(100%,440px);aspect-ratio:1;margin:20px auto 12px;overflow:hidden;background:#fff;border:1px solid #d9dee7;border-radius:12px}
+.student-payment-qr-frame .student-payment-qr{position:absolute;display:block;width:140%;max-width:none;height:auto;left:-20%;top:-43%;margin:0}
+.student-qr-original{text-align:center}
+@media(max-width:480px){.student-fee-dialog{padding:16px}.student-payment-qr-frame{width:100%}}

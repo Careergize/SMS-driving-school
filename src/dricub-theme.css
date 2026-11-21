@@ -145,3 +145,7 @@ dialog { border-radius: 3px; border-top: 5px solid var(--school-yellow); }
   .testimonial-overview .text-link { margin-left: 0; }
   .footer-content { padding-block: 35px; }
 }
+.registration-page .button { background: #bd1830; border-color: #bd1830; color: #fff; }
+.registration-page .button:hover { background: #991225; border-color: #991225; color: #fff; }
+.registration-quick-links { margin-top: 32px; }
+.registration-quick-links h2 { font-size: 1.2rem; margin: 0 0 16px; }

@@ -13,7 +13,7 @@ const valueOr = (value, fallback = 'Not recorded') => escapeHtml(value || fallba
 
 export function studentListUrl(filters) {
   const params = new URLSearchParams({ tab: 'students' })
-  for (const key of ['branch', 'payment', 'period', 'week']) {
+  for (const key of ['branch', 'payment', 'period', 'week', 'student-search']) {
     if (filters.get(key)) params.set(key, filters.get(key))
   }
   return '/dashboard?' + params
@@ -52,9 +52,16 @@ function renderDetails(student) {
     <span>${escapeHtml(lesson.instructor_name)} · ${lesson.duration_minutes} min · ${attendanceLabels[lesson.attendance]}${lesson.vehicle_registration ? ' · ' + escapeHtml(lesson.vehicle_registration) : ''}</span>
   </li>`).join('')
   return `<dl class="student-details">${fields.map(([label, value]) => `<div><dt>${label}</dt><dd>${value}</dd></div>`).join('')}</dl>
+    <section><h3>Fee payment screenshots</h3>
+      ${student.payment_proofs?.length ? `<p>Verify each payment before updating Amount paid in Edit student. Submitted screenshots do not change the balance automatically.</p><ul>${student.payment_proofs.map(proof => `<li>${money(proof.amount)} · ${displayProofDate(proof.created_at)}${proof.reference ? ' · Reference: ' + escapeHtml(proof.reference) : ''} · <a href="/fee-proofs/${proof.id}" target="_blank" rel="noopener noreferrer">Download payment screenshot</a></li>`).join('')}</ul>` : '<p>No payment screenshots submitted.</p>'}
+    </section>
     <section class="student-lessons"><h3>Class details</h3>
       ${lessons ? `<ul>${lessons}</ul>` : '<p>No classes have been scheduled.</p>'}
     </section>`
+}
+
+function displayProofDate(value) {
+  return escapeHtml(new Intl.DateTimeFormat('en-IN', { dateStyle: 'medium', timeZone: 'Asia/Kolkata' }).format(new Date(value)))
 }
 
 function renderEdit(student, branches, instructors, url, creating = false) {
